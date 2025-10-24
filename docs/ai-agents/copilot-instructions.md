@@ -298,7 +298,7 @@ data class ConversationUiState(
   ```
 
 ### File Organization
-- Follow the refactoring plan in `Project Plan.md` when implementing features
+- Follow the refactoring plan in `docs/planning/docs/planning/Project Plan.md` when implementing features
 - Template files should be renamed: `ui/home` → `ui/conversation`, `ui/gallery` → `ui/textinput`, etc.
 - Services go in dedicated `services/` package, not mixed with UI code
 
@@ -426,7 +426,7 @@ Add to `AndroidManifest.xml`:
 ## Project-Specific Conventions
 
 ### File Organization
-- Follow the refactoring plan in `Project Plan.md` when implementing features
+- Follow the refactoring plan in `docs/planning/docs/planning/Project Plan.md` when implementing features
 - Template files should be renamed: `ui/home` → `ui/conversation`, `ui/gallery` → `ui/textinput`, etc.
 - Services go in dedicated `services/` package, not mixed with UI code
 

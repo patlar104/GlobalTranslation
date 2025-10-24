@@ -526,8 +526,10 @@ When adding features, consider:
 5. Collect StateFlow with `collectAsState()`
 
 ## Additional Resources
-- See `.github/instructions/copilot-instructions.md` for detailed patterns
-- See `.github/instructions/copilot-analysis-rules.instructions.md` for debugging
-- See `Project Plan.md` for implementation status
+- See `.github/copilot-instructions.md` for primary configuration
+- See `docs/ai-agents/copilot-instructions.md` for detailed patterns
+- See `docs/ai-agents/copilot-analysis-rules.instructions.md` for debugging
+- See `docs/planning/Project Plan.md` for implementation status
+- See `docs/README.md` for complete documentation index
 - See `README.md` for build setup and troubleshooting
 

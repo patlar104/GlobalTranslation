@@ -4,6 +4,11 @@ applyTo: '**/*'
 
 # Copilot Instructions for GlobalTranslation Android App
 
+> **📚 Documentation Hub**: All project documentation is organized in [`docs/`](../docs/README.md)
+> - **Planning**: [`docs/planning/`](../docs/planning/) - Project Plan and Feature Plan
+> - **AI Agents**: [`docs/ai-agents/`](../docs/ai-agents/) - Detailed instructions and quick reference
+> - **Archive**: [`docs/archive/`](../docs/archive/) - Historical summaries and implementation reports
+
 ## Project Overview
 **PRODUCTION-READY** Android translation app with **multi-module clean architecture** using Jetpack Compose and ML Kit. Core features complete: live conversation translation, text input translation, camera translation, and language management. Architecture refactored into :core, :data, and :app modules for optimal testability and maintainability. **Now includes comprehensive 16KB page size support** for ARM64 devices and Google Play compliance.
 
