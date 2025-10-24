@@ -23,6 +23,16 @@ The workflow runs on:
 - **Push** to `main` branch or any `copilot/**` branches
 - **Pull Requests** targeting `main` branch
 
+## Permissions
+
+The workflow requires the following permissions:
+- **contents: read** - Read repository contents
+- **checks: write** - Create/update check runs (for test reports)
+- **pull-requests: write** - Comment on PRs with test results
+- **actions: read** - Read workflow artifacts
+
+These permissions enable the test reporter to create inline test reports visible directly in pull requests.
+
 ## Jobs
 
 ### 1. Build and Unit Tests

@@ -25,6 +25,13 @@ on:
   pull_request:
     branches: [ main ]
 
+# Required permissions for test-reporter action and artifact uploads
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+  actions: read
+
 jobs:
   # Job 1: Build and Unit Tests
   build-and-test:
@@ -75,6 +82,7 @@ jobs:
       
       - name: Publish test report
         if: always()
+        continue-on-error: true
         uses: dorny/test-reporter@v1
         with:
           name: Unit Tests
@@ -130,7 +138,11 @@ jobs:
     
     strategy:
       matrix:
-        variant: [debug, release]
+        include:
+          - variant: debug
+            gradle-task: assembleDebug
+          - variant: release
+            gradle-task: assembleRelease
     
     steps:
       - name: Checkout code
@@ -147,7 +159,7 @@ jobs:
         run: chmod +x ./gradlew
       
       - name: Assemble ${{ matrix.variant }} APK
-        run: ./gradlew :app:assemble${{ matrix.variant == 'debug' && 'Debug' || 'Release' }} --stacktrace
+        run: ./gradlew :app:${{ matrix.gradle-task }} --stacktrace
       
       - name: Upload ${{ matrix.variant }} APK
         uses: actions/upload-artifact@v4
