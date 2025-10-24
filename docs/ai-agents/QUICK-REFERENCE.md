@@ -324,7 +324,7 @@ packaging { jniLibs { useLegacyPackaging = false } }
 | `.cursorrules` | Quick patterns & build config |
 | `copilot-instructions.md` | Detailed architecture & patterns |
 | `copilot-analysis-rules.instructions.md` | Error prevention & debugging |
-| `Project Plan.md` | Implementation status |
+| `docs/planning/docs/planning/Project Plan.md` | Implementation status |
 | `README.md` | Setup & user docs |
 
 ## 🎯 Before You Code
@@ -423,6 +423,6 @@ override suspend fun areModelsDownloaded(from: String, to: String): Boolean {
 
 **Need More Details?** See:
 - `.cursorrules` for patterns
-- `.github/instructions/copilot-instructions.md` for architecture
-- `.github/instructions/copilot-analysis-rules.instructions.md` for debugging
+- `docs/ai-agents/copilot-instructions.md` for architecture
+- `docs/ai-agents/copilot-analysis-rules.instructions.md` for debugging
 

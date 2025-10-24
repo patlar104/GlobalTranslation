@@ -253,7 +253,7 @@ Always remember:
 
 - Project is in **transformation phase** - template code being replaced
 - Many features are **planned but not implemented**
-- Follow **Project Plan.md** for implementation order
+- Follow **docs/planning/Project Plan.md** for implementation order
 - Current code may be **placeholder/template** code
 
 ### 2. Architecture Pattern Recognition

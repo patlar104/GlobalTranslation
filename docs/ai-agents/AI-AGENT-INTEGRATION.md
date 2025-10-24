@@ -2,6 +2,8 @@
 
 This document explains how different instruction files work together to provide comprehensive guidance for AI coding assistants (GitHub Copilot, Cursor AI, etc.).
 
+> **📁 Location Note**: All AI agent instructions have been consolidated in `docs/ai-agents/` directory.
+
 ## 📋 Instruction Files Overview
 
 ### 1. `.cursorrules` (Root Directory)
@@ -21,9 +23,23 @@ This document explains how different instruction files work together to provide 
 - Troubleshooting build issues
 - Verifying correct approach
 
-### 2. `.github/instructions/copilot-instructions.md`
+### 2. `.github/copilot-instructions.md`
+**Purpose**: Primary GitHub Copilot configuration  
+**Audience**: GitHub Copilot (standard location)  
+**Focus**:
+- High-level project overview
+- Multi-module architecture summary
+- Critical build setup
+- References to detailed documentation in `docs/`
+
+**When to consult**:
+- Initial project understanding
+- Quick reference for build config
+- Finding pointers to detailed docs
+
+### 3. `docs/ai-agents/copilot-instructions.md`
 **Purpose**: Comprehensive project documentation  
-**Audience**: GitHub Copilot, all AI assistants  
+**Audience**: All AI assistants  
 **Focus**:
 - Complete architecture overview
 - Detailed implementation patterns
@@ -38,7 +54,7 @@ This document explains how different instruction files work together to provide 
 - Learning project conventions
 - Planning larger changes
 
-### 3. `.github/instructions/copilot-analysis-rules.instructions.md`
+### 4. `docs/ai-agents/copilot-analysis-rules.instructions.md`
 **Purpose**: Error prevention and debugging  
 **Audience**: All AI assistants  
 **Focus**:
@@ -55,7 +71,7 @@ This document explains how different instruction files work together to provide 
 - Debugging build issues
 - Validating approach before implementation
 
-### 4. `Project Plan.md` (Root Directory)
+### 4. `docs/planning/docs/planning/Project Plan.md` (Root Directory)
 **Purpose**: Implementation status and history  
 **Audience**: Developers, project managers, AI assistants  
 **Focus**:
@@ -93,20 +109,20 @@ This document explains how different instruction files work together to provide 
 
 ### Example 1: Adding a New Feature
 
-**Step 1**: Read `Project Plan.md`
+**Step 1**: Read `docs/planning/docs/planning/Project Plan.md`
 - ✅ Verify feature isn't already implemented
 - ✅ Check current architecture status
 - ✅ Understand existing patterns
 - ✅ Verify 16KB page size support status
 
-**Step 2**: Read `.github/instructions/copilot-instructions.md`
+**Step 2**: Read `docs/ai-agents/copilot-instructions.md`
 - ✅ Learn detailed implementation patterns
 - ✅ Review ViewModel and Service patterns
 - ✅ Understand Hilt setup requirements
 - ✅ Check 16KB page size implementation details
 - ✅ Check testing approach
 
-**Step 3**: Check `.github/instructions/copilot-analysis-rules.instructions.md`
+**Step 3**: Check `docs/ai-agents/copilot-analysis-rules.instructions.md`
 - ✅ Review pre-change validation checklist
 - ✅ Understand common mistake patterns
 - ✅ Note architecture constraints
@@ -119,7 +135,7 @@ This document explains how different instruction files work together to provide 
 - ✅ Ensure resource cleanup
 - ✅ Verify 16KB page size patterns
 
-**Step 5**: Validate with `.github/instructions/copilot-analysis-rules.instructions.md`
+**Step 5**: Validate with `docs/ai-agents/copilot-analysis-rules.instructions.md`
 - ✅ Run post-change validation
 - ✅ Verify no architecture violations
 - ✅ Check build configuration unchanged
@@ -137,13 +153,13 @@ This document explains how different instruction files work together to provide 
 - ✅ Check build configuration requirements
 - ✅ Verify 16KB page size configuration
 
-**Step 3**: Use `.github/instructions/copilot-analysis-rules.instructions.md`
+**Step 3**: Use `docs/ai-agents/copilot-analysis-rules.instructions.md`
 - ✅ Follow debugging workflow
 - ✅ Check version compatibility
 - ✅ Verify plugin configuration
 - ✅ Test 16KB build variant
 
-**Step 4**: Verify against `.github/instructions/copilot-instructions.md`
+**Step 4**: Verify against `docs/ai-agents/copilot-instructions.md`
 - ✅ Confirm build system setup matches
 - ✅ Check dependency versions
 - ✅ Review critical build setup section
@@ -157,19 +173,19 @@ This document explains how different instruction files work together to provide 
 - ✅ Confirm resource cleanup exists
 - ✅ Verify 16KB page size patterns
 
-**Step 2**: Validate with `.github/instructions/copilot-analysis-rules.instructions.md`
+**Step 2**: Validate with `docs/ai-agents/copilot-analysis-rules.instructions.md`
 - ✅ Run through architecture validation rules
 - ✅ Check for common mistake patterns
 - ✅ Verify file-specific patterns
 - ✅ Test 16KB build variant compatibility
 
-**Step 3**: Compare against `.github/instructions/copilot-instructions.md`
+**Step 3**: Compare against `docs/ai-agents/copilot-instructions.md`
 - ✅ Ensure matches documented patterns
 - ✅ Verify follows best practices
 - ✅ Check integration points
 - ✅ Verify 16KB page size implementation
 
-**Step 4**: Update `Project Plan.md` if needed
+**Step 4**: Update `docs/planning/docs/planning/Project Plan.md` if needed
 - ✅ Document new implementation
 - ✅ Note any issues found and fixed
 - ✅ Update verification status
@@ -192,7 +208,7 @@ copilot-analysis-rules.instructions.md (Validation & Debugging)
     ↓
 Status & History
     ↓
-Project Plan.md (Implementation Status)
+docs/planning/Project Plan.md (Implementation Status)
     ↓
 User Documentation
     ↓
@@ -202,12 +218,12 @@ README.md (Setup & Troubleshooting)
 ## 🎯 Best Practices for AI Assistants
 
 ### Always Start With
-1. Read `Project Plan.md` to understand current status
+1. Read `docs/planning/docs/planning/Project Plan.md` to understand current status
 2. Check `.cursorrules` for quick pattern reference
 3. Review relevant sections in `copilot-instructions.md`
 
 ### Before Making Changes
-1. Read `.github/instructions/copilot-analysis-rules.instructions.md`
+1. Read `docs/ai-agents/copilot-analysis-rules.instructions.md`
 2. Run through pre-change validation checklist
 3. Verify pattern in `.cursorrules`
 
@@ -218,7 +234,7 @@ README.md (Setup & Troubleshooting)
 
 ### After Making Changes
 1. Validate against `copilot-analysis-rules.instructions.md`
-2. Update `Project Plan.md` if significant change
+2. Update `docs/planning/docs/planning/Project Plan.md` if significant change
 3. Consider updating `README.md` if user-facing
 
 ## 🔍 Finding Information
@@ -234,7 +250,7 @@ README.md (Setup & Troubleshooting)
 → Examples: Existing ViewModels in project
 
 ### "What's already implemented?"
-→ `Project Plan.md` → Implementation Status sections
+→ `docs/planning/docs/planning/Project Plan.md` → Implementation Status sections
 → `README.md` → Completed Implementation section
 → Verify: Actual code in `app/src/main/java/`
 
@@ -282,7 +298,7 @@ README.md (Setup & Troubleshooting)
 - ✅ Validation checklist updated
 - ✅ 16KB page size compatibility checks added
 
-**`Project Plan.md`**
+**`docs/planning/docs/planning/Project Plan.md`**
 - ✅ Feature implementation status changes
 - ✅ Build configuration updated
 - ✅ Significant bug fixed
@@ -299,13 +315,13 @@ README.md (Setup & Troubleshooting)
 ## 🚀 Integration with AI Tools
 
 ### GitHub Copilot
-- Reads all `.md` files in `.github/instructions/`
+- Reads all `.md` files in `docs/ai-agents/`
 - Uses context from open files
 - Applies `copilot-instructions.md` and `copilot-analysis-rules.instructions.md`
 
 ### Cursor AI
 - Reads `.cursorrules` in root directory
-- Also accesses `.github/instructions/` files
+- Also accesses `docs/ai-agents/` files
 - Integrates with all markdown documentation
 - Provides quick pattern matching from `.cursorrules`
 
@@ -318,12 +334,12 @@ README.md (Setup & Troubleshooting)
 
 ### First Session
 1. Read `README.md` for project overview
-2. Read `Project Plan.md` for current status
+2. Read `docs/planning/docs/planning/Project Plan.md` for current status
 3. Scan `.cursorrules` for critical patterns
 4. Bookmark `copilot-instructions.md` for details
 
 ### Before First Code Change
-1. Read `.github/instructions/copilot-analysis-rules.instructions.md`
+1. Read `docs/ai-agents/copilot-analysis-rules.instructions.md`
 2. Understand pre-change validation
 3. Review architecture constraints
 4. Check common mistake patterns
@@ -332,7 +348,7 @@ README.md (Setup & Troubleshooting)
 1. Keep `.cursorrules` open for quick reference
 2. Consult `copilot-instructions.md` for complex patterns
 3. Use `copilot-analysis-rules.instructions.md` for validation
-4. Update `Project Plan.md` when implementing features
+4. Update `docs/planning/docs/planning/Project Plan.md` when implementing features
 
 ## ✅ Verification Checklist
 
@@ -342,7 +358,7 @@ When assisting with this codebase, verify:
 - [ ] Followed patterns in `.cursorrules`
 - [ ] Checked against `copilot-analysis-rules.instructions.md`
 - [ ] Matches architecture in `copilot-instructions.md`
-- [ ] Updated `Project Plan.md` if significant change
+- [ ] Updated `docs/planning/docs/planning/Project Plan.md` if significant change
 - [ ] Updated `README.md` if user-facing change
 - [ ] Maintained consistency with existing code
 - [ ] No architecture violations introduced
@@ -355,13 +371,13 @@ When assisting with this codebase, verify:
 
 Throughout the instruction files, you'll find cross-references:
 
-- **"See `.github/instructions/copilot-instructions.md`"**
+- **"See `docs/ai-agents/copilot-instructions.md`"**
   → For detailed implementation patterns
   
 - **"See `.cursorrules`"**
   → For quick pattern reference
   
-- **"See `Project Plan.md`"**
+- **"See `docs/planning/docs/planning/Project Plan.md`"**
   → For implementation status
   
 - **"See `README.md`"**
@@ -377,7 +393,7 @@ These cross-references help navigate the documentation efficiently.
 **For Quick Tasks**: Use `.cursorrules`  
 **For Understanding**: Use `copilot-instructions.md`  
 **For Validation**: Use `copilot-analysis-rules.instructions.md`  
-**For Status**: Use `Project Plan.md`  
+**For Status**: Use `docs/planning/docs/planning/Project Plan.md`  
 **For Users**: Use `README.md`  
 
 **Together**, these files provide comprehensive guidance for maintaining code quality, following best practices, and avoiding common pitfalls in this production-ready Android translation app.

@@ -172,18 +172,22 @@ GlobalTranslation/
 
 ## 📚 Development Guide
 
+> **📁 All Documentation**: See [`docs/README.md`](docs/README.md) for complete documentation index
+
 ### For Developers
-- **Quick Reference**: See `.github/instructions/QUICK-REFERENCE.md` - Essential patterns and commands
-- **Architecture Patterns**: See `.github/instructions/copilot-instructions.md` - Detailed implementation guide
-- **Code Analysis Rules**: See `.github/instructions/copilot-analysis-rules.instructions.md` - Error prevention
+- **Quick Reference**: See [`docs/ai-agents/QUICK-REFERENCE.md`](docs/ai-agents/QUICK-REFERENCE.md) - Essential patterns and commands
+- **Architecture Patterns**: See [`docs/ai-agents/copilot-instructions.md`](docs/ai-agents/copilot-instructions.md) - Detailed implementation guide
+- **Code Analysis Rules**: See [`docs/ai-agents/copilot-analysis-rules.instructions.md`](docs/ai-agents/copilot-analysis-rules.instructions.md) - Error prevention
+- **Project Plan**: See [`docs/planning/Project Plan.md`](docs/planning/Project%20Plan.md) - Complete implementation history
 - **Testing Strategy**: Comprehensive ViewModels with StateFlow testing patterns
 - **Hilt Setup**: Complete dependency injection with services module
 
 ### For AI Assistants (Cursor, Copilot, etc.)
 - **Cursor Rules**: See `.cursorrules` in root - Immediate patterns and build config
-- **Copilot Instructions**: See `.github/instructions/copilot-instructions.md` - Comprehensive guide
-- **Integration Guide**: See `.github/instructions/AI-AGENT-INTEGRATION.md` - How all docs work together
-- **Analysis Rules**: See `.github/instructions/copilot-analysis-rules.instructions.md` - Debugging workflows
+- **Copilot Instructions**: See `.github/copilot-instructions.md` - Primary configuration (GitHub standard location)
+- **Detailed Guide**: See [`docs/ai-agents/copilot-instructions.md`](docs/ai-agents/copilot-instructions.md) - Comprehensive guide
+- **Integration Guide**: See [`docs/ai-agents/AI-AGENT-INTEGRATION.md`](docs/ai-agents/AI-AGENT-INTEGRATION.md) - How all docs work together
+- **Analysis Rules**: See [`docs/ai-agents/copilot-analysis-rules.instructions.md`](docs/ai-agents/copilot-analysis-rules.instructions.md) - Debugging workflows
 
 ## ✅ **Completed Implementation (Verified)**
 
@@ -317,7 +321,7 @@ The app is feature-complete and follows Android best practices:
 
 ### Future Enhancement Opportunities
 
-The planned core features are implemented. See **FEATURE_PLAN.md** for potential future enhancements (not currently in active development):
+The planned core features are implemented. See [`docs/planning/FEATURE_PLAN.md`](docs/planning/FEATURE_PLAN.md) for potential future enhancements (not currently in active development):
 - Face-to-Face Mode (split-screen conversation)
 - AI Practice with Gemini (conversational learning)
 - Image Translation (upload/translate images)
@@ -401,16 +405,21 @@ Then do a clean rebuild:
 
 This project includes comprehensive documentation for both developers and AI coding assistants:
 
+> **📚 Documentation Hub**: All documentation is organized in [`docs/`](docs/README.md) with clear categories
+
 ### Developer Documentation
-- **Quick Reference Card**: `.github/instructions/QUICK-REFERENCE.md` - Print-friendly patterns cheat sheet
-- **Project Plan**: `Project Plan.md` - Implementation status and history
+- **Quick Reference Card**: [`docs/ai-agents/QUICK-REFERENCE.md`](docs/ai-agents/QUICK-REFERENCE.md) - Print-friendly patterns cheat sheet
+- **Project Plan**: [`docs/planning/Project Plan.md`](docs/planning/Project%20Plan.md) - Implementation status and history
+- **Feature Roadmap**: [`docs/planning/FEATURE_PLAN.md`](docs/planning/FEATURE_PLAN.md) - Future enhancement options
+- **Historical Archive**: [`docs/archive/`](docs/archive/) - Implementation summaries and bug fix reports
 - **This README**: Build setup, troubleshooting, and getting started
 
 ### AI Assistant Documentation
 - **Cursor Rules**: `.cursorrules` - Quick patterns and critical build config
-- **Copilot Instructions**: `.github/instructions/copilot-instructions.md` - Comprehensive architecture guide
-- **Analysis Rules**: `.github/instructions/copilot-analysis-rules.instructions.md` - Error prevention and debugging
-- **Integration Guide**: `.github/instructions/AI-AGENT-INTEGRATION.md` - How all instruction files work together
+- **Copilot Instructions**: `.github/copilot-instructions.md` - Primary configuration (GitHub standard location)
+- **Detailed Guide**: [`docs/ai-agents/copilot-instructions.md`](docs/ai-agents/copilot-instructions.md) - Comprehensive architecture guide
+- **Analysis Rules**: [`docs/ai-agents/copilot-analysis-rules.instructions.md`](docs/ai-agents/copilot-analysis-rules.instructions.md) - Error prevention and debugging
+- **Integration Guide**: [`docs/ai-agents/AI-AGENT-INTEGRATION.md`](docs/ai-agents/AI-AGENT-INTEGRATION.md) - How all instruction files work together
 
 All documentation is kept synchronized and verified against the actual codebase.
 
