@@ -27,8 +27,16 @@ android {
 
     signingConfigs {
         create("release") {
-            // Using debug keystore for release builds
-            // In production, replace with proper release keystore
+            // ⚠️ DEVELOPMENT ONLY: Using debug keystore for release builds
+            // ⚠️ WARNING: Debug keystore is publicly known and insecure
+            // ⚠️ TODO: Replace with proper release keystore for production
+            //
+            // For production releases:
+            // 1. Generate a release keystore: keytool -genkey -v -keystore release.keystore
+            // 2. Store credentials securely (e.g., environment variables, CI/CD secrets)
+            // 3. Update this configuration to use the release keystore
+            //
+            // This configuration allows APKs to build and install for testing purposes
             storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
             storePassword = "android"
             keyAlias = "androiddebugkey"
