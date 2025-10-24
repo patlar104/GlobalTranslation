@@ -13,6 +13,10 @@ Located in [`planning/`](./planning/)
 - **[Project Plan.md](./planning/Project%20Plan.md)** - Complete implementation history and project roadmap
 - **[FEATURE_PLAN.md](./planning/FEATURE_PLAN.md)** - Feature planning with implementation phases
 
+### 🔧 CI/CD and DevOps
+Located in [`ci-cd/`](./ci-cd/)
+- **[GITHUB_ACTIONS.md](./ci-cd/GITHUB_ACTIONS.md)** - GitHub Actions workflow documentation and troubleshooting
+
 ### 🤖 AI Agent Instructions
 Located in [`ai-agents/`](./ai-agents/)
 - **[copilot-instructions.md](./ai-agents/copilot-instructions.md)** - Comprehensive guide for AI assistants

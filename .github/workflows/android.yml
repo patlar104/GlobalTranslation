@@ -1,46 +1,211 @@
-# Android CI workflow for GlobalTranslation
-# AGP 8.13.0 is now published and available in Google Maven as of Oct 2025.
-# Previous CI failures were due to missing artifacts in Google Maven and lack of a workflow file.
-# This workflow will:
-#  - Build with AGP 8.13.0 (now resolvable in CI)
-#  - Upload debug APK for inspection
-#  - Use JDK 21 (matches local JVM target)
-# If future AGP plugin resolution errors occur, check Google Maven for artifact availability and CI runner repository config.
+# Android CI/CD workflow for GlobalTranslation
+# Comprehensive workflow that builds, tests, and validates the multi-module Android app
+# 
+# Architecture:
+#   - :core (Pure Kotlin) - Domain models and interfaces
+#   - :data (Android Library) - Room database and ML Kit providers
+#   - :app (Android App) - Compose UI with Material3
+#
+# This workflow:
+#   1. Builds all modules with AGP 8.13.0 and Kotlin 2.2.20
+#   2. Runs unit tests on :core and :app modules
+#   3. Runs lint checks across all modules
+#   4. Assembles debug and release APKs
+#   5. Uploads build artifacts for inspection
+#
+# Requirements:
+#   - JDK 21 (LTS, matches project JVM target)
+#   - AGP 8.13.0 (stable, Hilt-compatible)
+#   - Gradle 8.13 with version catalog
 name: Android CI
 
 on:
   push:
-    branches: [ main, copilot/update-ui-ux-documentation ]
+    branches: [ main, 'copilot/**' ]
   pull_request:
     branches: [ main ]
 
 jobs:
-  build:
-    name: Build with Gradle
+  # Job 1: Build and Unit Tests
+  build-and-test:
+    name: Build and Unit Tests
     runs-on: ubuntu-latest
+    
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Full history for better caching
+      
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
           distribution: 'temurin'
           java-version: '21'
-      - name: Cache Gradle files
+          cache: 'gradle'
+      
+      - name: Cache Gradle dependencies
         uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties', '**/libs.versions.toml') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
-      - name: Build project
-        run: ./gradlew build --warning-mode=all
-      - name: Assemble Debug APK
-        run: ./gradlew :app:assembleDebug --warning-mode=all
-      - name: Upload APK artifact
+      
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+      
+      - name: Build all modules
+        run: ./gradlew build --stacktrace --warning-mode=all
+      
+      - name: Run unit tests
+        run: ./gradlew test --stacktrace --continue
+      
+      - name: Upload unit test results
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: app-debug-apk
-          path: app/build/outputs/apk/debug/*.apk
+          name: unit-test-results
+          path: |
+            **/build/test-results/test*/*.xml
+            **/build/reports/tests/
+          retention-days: 7
+      
+      - name: Publish test report
+        if: always()
+        uses: dorny/test-reporter@v1
+        with:
+          name: Unit Tests
+          path: '**/build/test-results/test*/*.xml'
+          reporter: java-junit
+          fail-on-error: false
+  
+  # Job 2: Lint and Code Quality
+  lint:
+    name: Lint and Code Quality
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+      
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+      
+      - name: Run lint checks
+        run: ./gradlew lint --stacktrace --continue
+      
+      - name: Upload lint reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: lint-reports
+          path: |
+            **/build/reports/lint-results-*.html
+            **/build/reports/lint-results-*.xml
+          retention-days: 7
+      
+      - name: Check lint results
+        if: always()
+        run: |
+          # Print summary of lint issues if any
+          if ls **/build/reports/lint-results-*.xml 1> /dev/null 2>&1; then
+            echo "📋 Lint reports generated. Check artifacts for details."
+          fi
+  
+  # Job 3: Build APKs
+  assemble:
+    name: Assemble APKs
+    runs-on: ubuntu-latest
+    needs: [build-and-test, lint]
+    
+    strategy:
+      matrix:
+        variant: [debug, release]
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'gradle'
+      
+      - name: Make gradlew executable
+        run: chmod +x ./gradlew
+      
+      - name: Assemble ${{ matrix.variant }} APK
+        run: ./gradlew :app:assemble${{ matrix.variant == 'debug' && 'Debug' || 'Release' }} --stacktrace
+      
+      - name: Upload ${{ matrix.variant }} APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-${{ matrix.variant }}-apk
+          path: app/build/outputs/apk/${{ matrix.variant }}/*.apk
+          retention-days: 14
+      
+      - name: Generate APK info
+        run: |
+          APK_PATH=$(find app/build/outputs/apk/${{ matrix.variant }} -name "*.apk" | head -1)
+          if [ -f "$APK_PATH" ]; then
+            echo "📦 APK built successfully: $(basename $APK_PATH)"
+            ls -lh "$APK_PATH"
+          fi
+  
+  # Job 4: Instrumented Tests (Optional - requires emulator)
+  # Uncomment when ready to add instrumented tests
+  # instrumented-tests:
+  #   name: Instrumented Tests
+  #   runs-on: ubuntu-latest
+  #   needs: build-and-test
+  #   
+  #   steps:
+  #     - name: Checkout code
+  #       uses: actions/checkout@v4
+  #     
+  #     - name: Set up JDK 21
+  #       uses: actions/setup-java@v4
+  #       with:
+  #         distribution: 'temurin'
+  #         java-version: '21'
+  #         cache: 'gradle'
+  #     
+  #     - name: Make gradlew executable
+  #       run: chmod +x ./gradlew
+  #     
+  #     - name: Enable KVM group perms
+  #       run: |
+  #         echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+  #         sudo udevadm control --reload-rules
+  #         sudo udevadm trigger --name-match=kvm
+  #     
+  #     - name: Run instrumented tests
+  #       uses: reactivecircus/android-emulator-runner@v2
+  #       with:
+  #         api-level: 29
+  #         target: default
+  #         arch: x86_64
+  #         profile: Nexus 6
+  #         script: ./gradlew connectedCheck --stacktrace
+  #     
+  #     - name: Upload instrumented test results
+  #       if: always()
+  #       uses: actions/upload-artifact@v4
+  #       with:
+  #         name: instrumented-test-results
+  #         path: |
+  #           **/build/reports/androidTests/
+  #           **/build/outputs/androidTest-results/
+  #         retention-days: 7
