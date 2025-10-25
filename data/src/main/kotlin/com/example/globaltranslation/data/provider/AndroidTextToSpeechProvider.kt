@@ -15,13 +15,21 @@ import javax.inject.Singleton
 
 /**
  * Android implementation of TextToSpeechProvider using Android TTS.
+ * 
+ * Battery optimizations:
+ * - Lazy TTS initialization (only when first needed)
+ * - Proper lifecycle management to prevent resource leaks
+ * - Efficient reuse of TTS instance across multiple calls
  */
 @Singleton
 class AndroidTextToSpeechProvider @Inject constructor(
     @ApplicationContext private val context: Context
 ) : TextToSpeechProvider {
     
+    @Volatile
     private var tts: TextToSpeech? = null
+    
+    @Volatile
     private var isInitialized = false
     
     override fun speak(text: String, languageCode: String): Flow<TtsEvent> = callbackFlow {
@@ -40,12 +48,12 @@ class AndroidTextToSpeechProvider @Inject constructor(
                 }
                 
                 @Deprecated("Deprecated in Java")
+                @Suppress("DEPRECATION")
                 override fun onError(utteranceId: String?) {
                     trySend(TtsEvent.Error("TTS error"))
                     close()
                 }
                 
-                @Deprecated("This is a deprecated method", ReplaceWith("onError(utteranceId, errorCode)"))
                 override fun onError(utteranceId: String?, errorCode: Int) {
                     trySend(TtsEvent.Error("TTS error: $errorCode"))
                     close()

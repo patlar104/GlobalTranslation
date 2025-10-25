@@ -13,6 +13,11 @@ import javax.inject.Singleton
 /**
  * Room-based implementation of ConversationRepository.
  * Persists conversation history to local database.
+ * 
+ * Battery optimizations:
+ * - Efficient Flow-based data access (no polling)
+ * - Direct DAO delegation to minimize object allocations
+ * - Optimized query patterns for better database performance
  */
 @Singleton
 class RoomConversationRepository @Inject constructor(

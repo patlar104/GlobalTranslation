@@ -17,12 +17,18 @@ import javax.inject.Singleton
 
 /**
  * Android implementation of SpeechProvider using built-in SpeechRecognizer.
+ * 
+ * Battery optimizations:
+ * - Automatic cleanup on flow cancellation
+ * - Efficient error handling to prevent resource leaks
+ * - Proper lifecycle management of SpeechRecognizer
  */
 @Singleton
 class AndroidSpeechProvider @Inject constructor(
     @ApplicationContext private val context: Context
 ) : SpeechProvider {
     
+    @Volatile
     private var speechRecognizer: SpeechRecognizer? = null
     
     override fun startListening(languageCode: String): Flow<SpeechResult> = callbackFlow {
