@@ -48,12 +48,12 @@ class AndroidTextToSpeechProvider @Inject constructor(
                 }
                 
                 @Deprecated("Deprecated in Java")
+                @Suppress("DEPRECATION")
                 override fun onError(utteranceId: String?) {
                     trySend(TtsEvent.Error("TTS error"))
                     close()
                 }
                 
-                @Deprecated("This is a deprecated method", ReplaceWith("onError(utteranceId, errorCode)"))
                 override fun onError(utteranceId: String?, errorCode: Int) {
                     trySend(TtsEvent.Error("TTS error: $errorCode"))
                     close()

@@ -22,6 +22,11 @@ private val Context.appPreferencesDataStore: DataStore<Preferences> by preferenc
  * DataStore-backed app preferences for settings and version tracking.
  * Handles app update detection and migration.
  * Open for testing - allows fake implementations to override behavior.
+ * 
+ * Battery optimizations:
+ * - Uses DataStore Flow for reactive, efficient preference access
+ * - No polling or repeated disk reads
+ * - Efficient Flow-based reactivity minimizes unnecessary operations
  */
 @Singleton
 open class AppPreferences @Inject constructor(
