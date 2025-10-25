@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Camera
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.CheckCircle
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.FlashOff
 import androidx.compose.material.icons.filled.FlashOn
 import androidx.compose.material.icons.filled.Language
@@ -55,6 +56,9 @@ import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
 import com.google.mlkit.vision.common.InputImage
 import java.util.concurrent.Executors
+import android.content.ClipData
+import android.content.ClipboardManager
+import android.content.Context
 
 /**
  * Camera screen for real-time text recognition and translation.
@@ -122,6 +126,11 @@ fun CameraScreen(
                     onFlashToggle = { viewModel.toggleFlash() },
                     onLanguagePickerClick = { showLanguagePicker = true },
                     onClearResults = { viewModel.clearResults() },
+                    onCopyTranslation = { text ->
+                        val clipboardManager = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("translation", text)
+                        clipboardManager.setPrimaryClip(clip)
+                    },
                     onCaptureClick = {
                         // Capture photo when button is tapped
                         imageCapture?.let { capture ->
@@ -269,6 +278,7 @@ private fun CameraOverlay(
     onFlashToggle: () -> Unit,
     onLanguagePickerClick: () -> Unit,
     onClearResults: () -> Unit,
+    onCopyTranslation: (String) -> Unit,
     onCaptureClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -277,6 +287,7 @@ private fun CameraOverlay(
         onFlashToggle = onFlashToggle,
         onLanguagePickerClick = onLanguagePickerClick,
         onClearResults = onClearResults,
+        onCopyTranslation = onCopyTranslation,
         onCaptureClick = onCaptureClick,
         modifier = modifier
     )
@@ -288,6 +299,7 @@ private fun CameraOverlayContent(
     onFlashToggle: () -> Unit,
     onLanguagePickerClick: () -> Unit,
     onClearResults: () -> Unit,
+    onCopyTranslation: (String) -> Unit,
     onCaptureClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -387,15 +399,36 @@ private fun CameraOverlayContent(
                             style = MaterialTheme.typography.titleMedium,
                             color = MaterialTheme.colorScheme.onSurface
                         )
-                        IconButton(
-                            onClick = onClearResults,
-                            modifier = Modifier.size(32.dp)
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(4.dp)
                         ) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Clear results",
-                                tint = MaterialTheme.colorScheme.onSurface
-                            )
+                            // Copy translation button
+                            IconButton(
+                                onClick = {
+                                    val translatedText = uiState.detectedTextBlocks
+                                        .mapNotNull { it.translatedText }
+                                        .joinToString("\n\n")
+                                    onCopyTranslation(translatedText)
+                                },
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.ContentCopy,
+                                    contentDescription = "Copy translation",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
+                            // Clear results button
+                            IconButton(
+                                onClick = onClearResults,
+                                modifier = Modifier.size(32.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "Clear results",
+                                    tint = MaterialTheme.colorScheme.onSurface
+                                )
+                            }
                         }
                     }
                     
@@ -922,6 +955,7 @@ fun CameraOverlayStatesPreview(
                 onFlashToggle = {},
                 onLanguagePickerClick = {},
                 onClearResults = {},
+                onCopyTranslation = {},
                 onCaptureClick = {},
                 modifier = Modifier.fillMaxSize()
             )
@@ -975,6 +1009,7 @@ fun CameraOverlayLivePreview() {
                 onFlashToggle = { state.value = state.value.copy(isFlashOn = !state.value.isFlashOn) },
                 onLanguagePickerClick = { cycleLanguages() },
                 onClearResults = { clear() },
+                onCopyTranslation = {},
                 onCaptureClick = { simulateCapture() },
                 modifier = Modifier.fillMaxSize()
             )
@@ -1009,6 +1044,7 @@ fun CameraOverlayUiCheckPreview() {
                 onFlashToggle = {},
                 onLanguagePickerClick = {},
                 onClearResults = {},
+                onCopyTranslation = {},
                 onCaptureClick = {},
                 modifier = Modifier.fillMaxSize()
             )
