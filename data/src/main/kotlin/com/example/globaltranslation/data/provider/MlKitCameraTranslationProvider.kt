@@ -89,9 +89,8 @@ class MlKitCameraTranslationProvider @Inject constructor(
         sourceLanguage: String,
         targetLanguage: String
     ): Result<List<TranslatedTextBlock>> {
-        if (imageData !is InputImage) {
-            return Result.failure(IllegalArgumentException("imageData must be InputImage"))
-        }
+        // Use utility for validation
+        ProviderUtils.validateImageData<List<TranslatedTextBlock>>(imageData)?.let { return it }
         
         return try {
             // Step 1: Recognize text with appropriate script recognizer
@@ -131,7 +130,12 @@ class MlKitCameraTranslationProvider @Inject constructor(
             
             Result.success(translatedBlocks)
         } catch (e: Exception) {
-            Result.failure(Exception("Camera translation error: ${e.message}"))
+            Result.failure(
+                ProviderUtils.wrapException(
+                    ProviderUtils.formatProviderError("CameraTranslation", "processImage", e),
+                    e
+                )
+            )
         }
     }
     
