@@ -101,6 +101,10 @@ class LruCache<K : Any, V : Any>(
     /**
      * Evicts the least recently used entry.
      * Should be called while holding the mutex.
+     * 
+     * Note: This implementation uses O(n) linear scan for eviction.
+     * For typical cache sizes (50-100 entries), this is acceptable.
+     * For larger caches, consider using LinkedHashMap with access order.
      */
     private fun evictLeastRecentlyUsed() {
         val lruEntry = cache.entries.minByOrNull { it.value.lastAccessTime }
@@ -111,19 +115,35 @@ class LruCache<K : Any, V : Any>(
      * Gets or computes a value.
      * If key exists, returns cached value.
      * Otherwise, computes value, caches it, and returns it.
+     * Thread-safe with double-checked locking to prevent duplicate computation.
      * 
      * @param key Cache key
      * @param compute Function to compute value if not cached
      * @return Cached or computed value
      */
     suspend fun getOrPut(key: K, compute: suspend () -> V): V {
-        // Fast path: check cache first
+        // Fast path: check cache first (no lock needed)
         get(key)?.let { return it }
         
-        // Slow path: compute and cache
-        val value = compute()
-        put(key, value)
-        return value
+        // Slow path: acquire lock and double-check
+        mutex.withLock {
+            // Double-check after acquiring lock to avoid duplicate computation
+            val existingEntry = cache[key]
+            if (existingEntry != null) {
+                existingEntry.lastAccessTime = System.currentTimeMillis()
+                return existingEntry.value
+            }
+            
+            // Evict if cache is full
+            if (cache.size >= maxSize) {
+                evictLeastRecentlyUsed()
+            }
+            
+            // Compute value while holding lock to prevent duplicates
+            val value = compute()
+            cache[key] = CacheEntry(value)
+            return value
+        }
     }
 }
 
@@ -173,10 +193,16 @@ class ExpiringCache<K : Any, V : Any>(
     /**
      * Removes expired entries from the cache.
      * Should be called periodically to prevent memory leaks.
+     * Thread-safe operation with synchronized access.
      */
+    @Synchronized
     fun cleanup() {
         val now = System.currentTimeMillis()
-        cache.entries.removeIf { it.value.expirationTime < now }
+        val expiredKeys = cache.entries
+            .filter { it.value.expirationTime < now }
+            .map { it.key }
+        
+        expiredKeys.forEach { cache.remove(it) }
     }
     
     /**
