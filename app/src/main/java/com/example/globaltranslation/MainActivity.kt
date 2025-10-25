@@ -75,6 +75,9 @@ fun GloabTranslationApp() {
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             // Animated content transition between screens with improved animations
+            // Strategy:
+            // - Camera screen: Use fade transitions for smooth camera lifecycle management
+            // - Other screens: Use slide + fade with spring physics for polished feel
             AnimatedContent(
                 targetState = currentDestination,
                 transitionSpec = {
@@ -85,6 +88,7 @@ fun GloabTranslationApp() {
                     
                     if (isCameraInvolved) {
                         // Smooth fade for camera transitions to avoid jarring camera start/stop
+                        // Longer duration (400ms) provides smooth visual continuity
                         fadeIn(
                             animationSpec = tween(400, easing = FastOutSlowInEasing)
                         ) togetherWith fadeOut(
@@ -92,8 +96,9 @@ fun GloabTranslationApp() {
                         )
                     } else {
                         // Smooth slide + fade for other screens
+                        // Spring animations create natural, bouncy motion
                         slideInHorizontally(
-                            initialOffsetX = { it / 4 },
+                            initialOffsetX = { it / 4 }, // Reduced offset for subtler slide
                             animationSpec = spring(
                                 dampingRatio = Spring.DampingRatioMediumBouncy,
                                 stiffness = Spring.StiffnessMediumLow
@@ -101,7 +106,7 @@ fun GloabTranslationApp() {
                         ) + fadeIn(
                             animationSpec = tween(350, easing = FastOutSlowInEasing)
                         ) togetherWith slideOutHorizontally(
-                            targetOffsetX = { -it / 4 },
+                            targetOffsetX = { -it / 4 }, // Reduced offset for subtler slide
                             animationSpec = spring(
                                 dampingRatio = Spring.DampingRatioMediumBouncy,
                                 stiffness = Spring.StiffnessMediumLow
