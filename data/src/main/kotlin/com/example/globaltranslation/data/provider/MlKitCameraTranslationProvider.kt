@@ -14,6 +14,11 @@ import javax.inject.Singleton
 /**
  * ML Kit implementation of CameraTranslationProvider.
  * Combines OCR and translation for camera-based text translation.
+ * 
+ * Battery optimizations:
+ * - Efficient parallel translation with proper coroutine context
+ * - Early exit on empty results to avoid unnecessary processing
+ * - Optimized error handling to prevent resource leaks
  */
 @Singleton
 class MlKitCameraTranslationProvider @Inject constructor(

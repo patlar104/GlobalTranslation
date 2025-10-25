@@ -19,6 +19,11 @@ import javax.inject.Singleton
  * ML Kit implementation of TranslationProvider.
  * Handles model downloading, translation operations, and resource management.
  * Thread-safe with persisted model state.
+ * 
+ * Battery optimizations:
+ * - Lazy model manager initialization
+ * - Efficient translator caching with automatic cleanup
+ * - Optimized mutex usage for download synchronization
  */
 @Singleton
 class MlKitTranslationProvider @Inject constructor(
@@ -33,6 +38,11 @@ class MlKitTranslationProvider @Inject constructor(
     
     // Mutex to synchronize model downloads and prevent duplicates
     private val downloadMutex = Mutex()
+    
+    // Lazy model manager to defer initialization until first use
+    private val modelManager: RemoteModelManager by lazy { 
+        RemoteModelManager.getInstance() 
+    }
     
     override suspend fun translate(
         text: String,
@@ -70,8 +80,6 @@ class MlKitTranslationProvider @Inject constructor(
     
     override suspend fun areModelsDownloaded(from: String, to: String): Boolean {
         return try {
-            val modelManager = RemoteModelManager.getInstance()
-            
             val fromModel = TranslateRemoteModel.Builder(from).build()
             val toModel = TranslateRemoteModel.Builder(to).build()
             
@@ -105,7 +113,6 @@ class MlKitTranslationProvider @Inject constructor(
     
     override suspend fun deleteModel(languageCode: String): Result<Unit> {
         return try {
-            val modelManager = RemoteModelManager.getInstance()
             val model = TranslateRemoteModel.Builder(languageCode).build()
             
             modelManager.deleteDownloadedModel(model).await()

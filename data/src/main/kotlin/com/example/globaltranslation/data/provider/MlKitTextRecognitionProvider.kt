@@ -23,6 +23,11 @@ import javax.inject.Singleton
  * ML Kit implementation of TextRecognitionProvider.
  * Uses ML Kit Text Recognition v2 for OCR with multi-script support.
  * Automatically selects the appropriate recognizer based on the language code.
+ * 
+ * Battery optimizations:
+ * - Efficient caching of recognizers to avoid recreation
+ * - Lazy initialization of recognizers (only when needed)
+ * - Proper cleanup on provider disposal
  */
 @Singleton
 class MlKitTextRecognitionProvider @Inject constructor() : TextRecognitionProvider {

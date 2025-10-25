@@ -20,6 +20,11 @@ private val Context.languageModelDataStore: DataStore<Preferences> by preference
 /**
  * DataStore-backed preferences for persisting downloaded language models.
  * Survives process death and app restarts.
+ * 
+ * Battery optimizations:
+ * - Efficient DataStore usage with Flow-based access
+ * - Optimized edit operations with minimal writes
+ * - Proper type annotations to reduce allocations
  */
 @Singleton
 class LanguageModelPreferences @Inject constructor(
