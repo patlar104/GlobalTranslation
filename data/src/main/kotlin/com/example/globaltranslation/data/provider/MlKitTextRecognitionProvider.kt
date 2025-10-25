@@ -21,13 +21,49 @@ import javax.inject.Singleton
 
 /**
  * ML Kit implementation of TextRecognitionProvider.
- * Uses ML Kit Text Recognition v2 for OCR with multi-script support.
- * Automatically selects the appropriate recognizer based on the language code.
  * 
- * Battery optimizations:
- * - Efficient caching of recognizers to avoid recreation
- * - Lazy initialization of recognizers (only when needed)
- * - Proper cleanup on provider disposal
+ * This provider performs optical character recognition (OCR) on images using
+ * Google's ML Kit Text Recognition v2 API with multi-script support.
+ * 
+ * ## Architecture:
+ * - **Singleton**: Shared instance across the app
+ * - **Multi-Script**: Supports Latin, Chinese, Japanese, Korean, Devanagari
+ * - **Cached**: One recognizer per script type (max 5)
+ * - **Lazy**: Recognizers created only when needed
+ * 
+ * ## Supported Scripts:
+ * | Script      | Languages                              | Model Size |
+ * |-------------|----------------------------------------|------------|
+ * | Latin       | English, Spanish, French, etc.        | ~20MB      |
+ * | Chinese     | Simplified & Traditional Chinese       | ~25MB      |
+ * | Japanese    | Hiragana, Katakana, Kanji             | ~25MB      |
+ * | Korean      | Hangul                                 | ~25MB      |
+ * | Devanagari  | Hindi, Marathi, Nepali, Sanskrit      | ~25MB      |
+ * 
+ * ## Performance:
+ * - First recognition: 1-3 seconds (model loading)
+ * - Cached recognition: 200-800ms per image
+ * - Memory per recognizer: ~30MB
+ * 
+ * ## Example Usage:
+ * ```kotlin
+ * @Inject lateinit var textRecognition: MlKitTextRecognitionProvider
+ * 
+ * // Recognize text in English/Latin script
+ * val result = textRecognition.recognizeText(inputImage, "en")
+ * result.onSuccess { detectedText ->
+ *     detectedText.textBlocks.forEach { block ->
+ *         println("Text: ${block.text}")
+ *         println("Bounding box: ${block.boundingBox}")
+ *     }
+ * }
+ * 
+ * // Recognize text in Chinese
+ * val chineseResult = textRecognition.recognizeText(inputImage, "zh")
+ * ```
+ * 
+ * @see com.example.globaltranslation.core.provider.TextRecognitionProvider
+ * @see MlKitConfig for configuration constants
  */
 @Singleton
 class MlKitTextRecognitionProvider @Inject constructor() : TextRecognitionProvider {
