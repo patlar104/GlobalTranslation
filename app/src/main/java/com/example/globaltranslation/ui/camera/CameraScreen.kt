@@ -59,6 +59,7 @@ import java.util.concurrent.Executors
 /**
  * Camera screen for real-time text recognition and translation.
  * Uses CameraX for camera preview and ML Kit for text recognition.
+ * Implements lifecycle-aware camera management for smooth navigation.
  */
 @Composable
 fun CameraScreen(
@@ -67,6 +68,8 @@ fun CameraScreen(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    
     var hasCameraPermission by remember {
         mutableStateOf(
             ContextCompat.checkSelfPermission(
@@ -79,6 +82,16 @@ fun CameraScreen(
         contract = ActivityResultContracts.RequestPermission()
     ) { isGranted ->
         hasCameraPermission = isGranted
+    }
+    
+    // Track if this screen is actively visible for proper camera lifecycle
+    var isScreenActive by remember { mutableStateOf(true) }
+    
+    DisposableEffect(lifecycleOwner) {
+        isScreenActive = true
+        onDispose {
+            isScreenActive = false
+        }
     }
     
     Box(modifier = modifier.fillMaxSize()) {
@@ -166,6 +179,7 @@ fun CameraScreen(
 /**
  * Camera preview component using CameraX.
  * Sets up preview and image capture (no continuous analysis).
+ * Implements smooth lifecycle transitions for better UX.
  */
 @Composable
 private fun CameraPreview(
@@ -177,6 +191,13 @@ private fun CameraPreview(
     val lifecycleOwner = LocalLifecycleOwner.current
     val previewView = remember { PreviewView(context) }
     var camera by remember { mutableStateOf<Camera?>(null) }
+    
+    // Animate the preview appearance for smooth transitions
+    val alpha by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(400, easing = FastOutSlowInEasing),
+        label = "camera_preview_alpha"
+    )
     
     // Update flash when isFlashOn changes
     LaunchedEffect(isFlashOn) {
@@ -222,7 +243,7 @@ private fun CameraPreview(
         }, ContextCompat.getMainExecutor(context))
         
         onDispose {
-            // Properly unbind all use cases and release camera
+            // Properly unbind all use cases and release camera resources
             try {
                 camera?.cameraControl?.enableTorch(false) // Turn off flash
                 cameraProvider?.unbindAll()
@@ -235,7 +256,7 @@ private fun CameraPreview(
     
     AndroidView(
         factory = { previewView },
-        modifier = modifier
+        modifier = modifier.graphicsLayer { this.alpha = alpha }
     )
 }
 
@@ -270,8 +291,17 @@ private fun CameraOverlayContent(
     onCaptureClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    // Animate overlay entrance for smooth UX
+    val overlayAlpha by animateFloatAsState(
+        targetValue = 1f,
+        animationSpec = tween(500, delayMillis = 100, easing = FastOutSlowInEasing),
+        label = "overlay_alpha"
+    )
+    
     Column(
-        modifier = modifier.padding(16.dp),
+        modifier = modifier
+            .padding(16.dp)
+            .graphicsLayer { alpha = overlayAlpha },
         verticalArrangement = Arrangement.SpaceBetween
     ) {
         // Top controls
@@ -324,8 +354,14 @@ private fun CameraOverlayContent(
             }
         }
         
-        // Document-style translation display (merged content)
-        if (uiState.detectedTextBlocks.isNotEmpty()) {
+        // Document-style translation display (merged content) with smooth animation
+        AnimatedVisibility(
+            visible = uiState.detectedTextBlocks.isNotEmpty(),
+            enter = fadeIn(animationSpec = tween(400)) + 
+                    expandVertically(animationSpec = tween(400, easing = FastOutSlowInEasing)),
+            exit = fadeOut(animationSpec = tween(300)) + 
+                   shrinkVertically(animationSpec = tween(300, easing = FastOutSlowInEasing))
+        ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -410,52 +446,72 @@ private fun CameraOverlayContent(
             }
         }
         
-        // Processing indicator
-        if (uiState.isProcessing) {
+        // Processing indicator with smooth animation
+        AnimatedVisibility(
+            visible = uiState.isProcessing,
+            enter = fadeIn() + expandVertically(),
+            exit = fadeOut() + shrinkVertically()
+        ) {
             LinearProgressIndicator(
                 modifier = Modifier.fillMaxWidth()
             )
         }
         
-        // Error message or info card
-        if (uiState.error != null) {
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                colors = CardDefaults.cardColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer
-                )
-            ) {
-                Column(
-                    modifier = Modifier.padding(16.dp),
-                    verticalArrangement = Arrangement.spacedBy(8.dp)
+        // Error message or info card with smooth transitions
+        AnimatedVisibility(
+            visible = uiState.error != null,
+            enter = fadeIn(animationSpec = tween(300)) + 
+                    expandVertically(animationSpec = tween(300)),
+            exit = fadeOut(animationSpec = tween(200)) + 
+                   shrinkVertically(animationSpec = tween(200))
+        ) {
+            uiState.error?.let { errorMessage ->
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = MaterialTheme.colorScheme.errorContainer
+                    )
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.Top
+                    Column(
+                        modifier = Modifier.padding(16.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Error",
-                            tint = MaterialTheme.colorScheme.onErrorContainer
-                        )
-                        Column {
-                            Text(
-                                text = uiState.error,
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onErrorContainer
+                        Row(
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.Top
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "Error",
+                                tint = MaterialTheme.colorScheme.onErrorContainer
                             )
-                            Spacer(modifier = Modifier.height(8.dp))
-                            Text(
-                                text = "Download models for: ${getLanguageName(uiState.sourceLanguageCode)} and ${getLanguageName(uiState.targetLanguageCode)}",
-                                style = MaterialTheme.typography.bodySmall,
-                                color = MaterialTheme.colorScheme.onErrorContainer
-                            )
+                            Column {
+                                Text(
+                                    text = errorMessage,
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                                Spacer(modifier = Modifier.height(8.dp))
+                                Text(
+                                    text = "Download models for: ${getLanguageName(uiState.sourceLanguageCode)} and ${getLanguageName(uiState.targetLanguageCode)}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onErrorContainer
+                                )
+                            }
                         }
                     }
                 }
             }
-        } else if (uiState.detectedTextBlocks.isEmpty() && !uiState.isProcessing && !uiState.isFrozen) {
-            // Help message when no text is detected and camera is live
+        }
+        
+        // Help message when no text is detected with smooth animation
+        AnimatedVisibility(
+            visible = uiState.detectedTextBlocks.isEmpty() && !uiState.isProcessing && !uiState.isFrozen && uiState.error == null,
+            enter = fadeIn(animationSpec = tween(400)) + 
+                    expandVertically(animationSpec = tween(400)),
+            exit = fadeOut(animationSpec = tween(300)) + 
+                   shrinkVertically(animationSpec = tween(300))
+        ) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
                 colors = CardDefaults.cardColors(
@@ -481,38 +537,52 @@ private fun CameraOverlayContent(
             }
         }
         
-        // Capture/Resume button at the bottom (Google Lens style)
+        // Capture/Resume button at the bottom (Google Lens style) with smooth transitions
         Row(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.Center
         ) {
-            if (!uiState.isFrozen) {
-                // Capture button
-                FloatingActionButton(
-                    onClick = onCaptureClick,
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                    modifier = Modifier.size(72.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Camera,
-                        contentDescription = "Capture and translate",
-                        modifier = Modifier.size(32.dp),
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
+            AnimatedContent(
+                targetState = uiState.isFrozen,
+                transitionSpec = {
+                    fadeIn(animationSpec = tween(300)) + scaleIn(
+                        initialScale = 0.8f,
+                        animationSpec = tween(300, easing = FastOutSlowInEasing)
+                    ) togetherWith fadeOut(animationSpec = tween(200)) + scaleOut(
+                        targetScale = 0.8f,
+                        animationSpec = tween(200, easing = FastOutSlowInEasing)
                     )
-                }
-            } else {
-                // Resume camera button
-                FloatingActionButton(
-                    onClick = onClearResults,
-                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                    modifier = Modifier.size(72.dp)
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Camera,
-                        contentDescription = "Resume camera",
-                        modifier = Modifier.size(32.dp),
-                        tint = MaterialTheme.colorScheme.onSecondaryContainer
-                    )
+                },
+                label = "capture_button_transition"
+            ) { isFrozen ->
+                if (!isFrozen) {
+                    // Capture button
+                    FloatingActionButton(
+                        onClick = onCaptureClick,
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        modifier = Modifier.size(72.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Camera,
+                            contentDescription = "Capture and translate",
+                            modifier = Modifier.size(32.dp),
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer
+                        )
+                    }
+                } else {
+                    // Resume camera button
+                    FloatingActionButton(
+                        onClick = onClearResults,
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        modifier = Modifier.size(72.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Camera,
+                            contentDescription = "Resume camera",
+                            modifier = Modifier.size(32.dp),
+                            tint = MaterialTheme.colorScheme.onSecondaryContainer
+                        )
+                    }
                 }
             }
         }

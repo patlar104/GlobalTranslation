@@ -74,22 +74,42 @@ fun GloabTranslationApp() {
         }
     ) {
         Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-            // Animated content transition between screens
+            // Animated content transition between screens with improved animations
             AnimatedContent(
                 targetState = currentDestination,
                 transitionSpec = {
-                    // Slide in from right and fade in, while sliding out to left and fading out
-                    slideInHorizontally(
-                        initialOffsetX = { it / 3 },
-                        animationSpec = tween(300, easing = FastOutSlowInEasing)
-                    ) + fadeIn(
-                        animationSpec = tween(300)
-                    ) togetherWith slideOutHorizontally(
-                        targetOffsetX = { -it / 3 },
-                        animationSpec = tween(300, easing = FastOutSlowInEasing)
-                    ) + fadeOut(
-                        animationSpec = tween(300)
-                    )
+                    // Use different animations based on screen type
+                    // Camera screen uses fade for smoother transitions
+                    val isCameraInvolved = targetState == AppDestinations.CAMERA || 
+                                          initialState == AppDestinations.CAMERA
+                    
+                    if (isCameraInvolved) {
+                        // Smooth fade for camera transitions to avoid jarring camera start/stop
+                        fadeIn(
+                            animationSpec = tween(400, easing = FastOutSlowInEasing)
+                        ) togetherWith fadeOut(
+                            animationSpec = tween(400, easing = FastOutSlowInEasing)
+                        )
+                    } else {
+                        // Smooth slide + fade for other screens
+                        slideInHorizontally(
+                            initialOffsetX = { it / 4 },
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        ) + fadeIn(
+                            animationSpec = tween(350, easing = FastOutSlowInEasing)
+                        ) togetherWith slideOutHorizontally(
+                            targetOffsetX = { -it / 4 },
+                            animationSpec = spring(
+                                dampingRatio = Spring.DampingRatioMediumBouncy,
+                                stiffness = Spring.StiffnessMediumLow
+                            )
+                        ) + fadeOut(
+                            animationSpec = tween(350, easing = FastOutSlowInEasing)
+                        )
+                    }
                 },
                 label = "screen_transition"
             ) { destination ->
