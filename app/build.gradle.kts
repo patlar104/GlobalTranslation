@@ -25,15 +25,35 @@ android {
         }
     }
 
+    signingConfigs {
+        create("release") {
+            // ⚠️ DEVELOPMENT ONLY: Using debug keystore for release builds
+            // ⚠️ WARNING: Debug keystore is publicly known and insecure
+            // ⚠️ TODO: Replace with proper release keystore for production
+            //
+            // For production releases:
+            // 1. Generate a release keystore: keytool -genkey -v -keystore release.keystore
+            // 2. Store credentials securely (e.g., environment variables, CI/CD secrets)
+            // 3. Update this configuration to use the release keystore
+            //
+            // This configuration allows APKs to build and install for testing purposes
+            storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
+        }
+    }
+
     buildTypes {
         debug {
             isMinifyEnabled = false
             isDebuggable = true
-            applicationIdSuffix = ".debug"
+            // Removed applicationIdSuffix to prevent package name conflicts
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            signingConfig = signingConfigs.getByName("release")
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -54,12 +74,12 @@ android {
         }
     }
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_21
-        targetCompatibility = JavaVersion.VERSION_21
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
     kotlin {
         compilerOptions {
-            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+            jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
         }
     }
     buildFeatures {
