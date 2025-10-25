@@ -27,20 +27,26 @@ android {
 
     signingConfigs {
         create("release") {
-            // ⚠️ DEVELOPMENT ONLY: Using debug keystore for release builds
-            // ⚠️ WARNING: Debug keystore is publicly known and insecure
-            // ⚠️ TODO: Replace with proper release keystore for production
+            // ⚠️ TEMPORARY CONFIGURATION: Optional signing for debugging purposes
+            // ⚠️ This allows building without a keystore for testing
+            // ⚠️ TODO: Add proper release keystore for production
             //
             // For production releases:
             // 1. Generate a release keystore: keytool -genkey -v -keystore release.keystore
             // 2. Store credentials securely (e.g., environment variables, CI/CD secrets)
             // 3. Update this configuration to use the release keystore
             //
-            // This configuration allows APKs to build and install for testing purposes
-            storeFile = file("${System.getProperty("user.home")}/.android/debug.keystore")
-            storePassword = "android"
-            keyAlias = "androiddebugkey"
-            keyPassword = "android"
+            // Optional debug keystore configuration (only used if file exists)
+            val debugKeystorePath = "${System.getProperty("user.home")}/.android/debug.keystore"
+            val debugKeystoreFile = file(debugKeystorePath)
+            
+            if (debugKeystoreFile.exists()) {
+                storeFile = debugKeystoreFile
+                storePassword = "android"
+                keyAlias = "androiddebugkey"
+                keyPassword = "android"
+            }
+            // If keystore doesn't exist, signing config remains empty (unsigned build for testing)
         }
     }
 
@@ -53,7 +59,11 @@ android {
         release {
             isMinifyEnabled = true
             isShrinkResources = true
-            signingConfig = signingConfigs.getByName("release")
+            // Only use signing config if keystore exists, otherwise create unsigned build
+            val releaseSigningConfig = signingConfigs.getByName("release")
+            if (releaseSigningConfig.storeFile?.exists() == true) {
+                signingConfig = releaseSigningConfig
+            }
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
