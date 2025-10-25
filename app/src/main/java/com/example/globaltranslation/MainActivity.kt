@@ -98,7 +98,7 @@ fun GloabTranslationApp() {
                         // Smooth slide + fade for other screens
                         // Spring animations create natural, bouncy motion
                         slideInHorizontally(
-                            initialOffsetX = { it / 4 }, // Reduced offset for subtler slide
+                            initialOffsetX = { it / 4 }, // Reduced from 1/3 to 1/4 for subtler slide
                             animationSpec = spring(
                                 dampingRatio = Spring.DampingRatioMediumBouncy,
                                 stiffness = Spring.StiffnessMediumLow
@@ -106,7 +106,7 @@ fun GloabTranslationApp() {
                         ) + fadeIn(
                             animationSpec = tween(350, easing = FastOutSlowInEasing)
                         ) togetherWith slideOutHorizontally(
-                            targetOffsetX = { -it / 4 }, // Reduced offset for subtler slide
+                            targetOffsetX = { -it / 4 }, // Reduced from 1/3 to 1/4 for subtler slide
                             animationSpec = spring(
                                 dampingRatio = Spring.DampingRatioMediumBouncy,
                                 stiffness = Spring.StiffnessMediumLow
