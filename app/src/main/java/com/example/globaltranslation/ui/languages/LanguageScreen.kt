@@ -4,17 +4,13 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
-import androidx.compose.material3.carousel.HorizontalCenteredHeroCarousel
-import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
@@ -81,20 +77,6 @@ private fun LanguageScreenContent(
         LanguageScreenHeader(
             isLoading = uiState.isLoading,
             onRefresh = onRefresh
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        // Popular language pairs carousel
-        PopularLanguagePairsCarousel(
-            availableLanguages = uiState.availableLanguages,
-            onLanguagePairSelected = { (fromLang, toLang) ->
-                // Start downloading both models for the selected pair
-                // ViewModel will check if already downloaded and skip if needed
-                onDownloadLanguage(fromLang)
-                onDownloadLanguage(toLang)
-            },
-            modifier = Modifier.fillMaxWidth()
         )
         
         Spacer(modifier = Modifier.height(16.dp))
@@ -456,178 +438,35 @@ private fun LanguageModelItem(
                 ) {
                     Text(
                         text = when (language.downloadStatus) {
-                            com.example.globaltranslation.ui.languages.DownloadStatus.PREPARING -> "Preparing download..."
-                            com.example.globaltranslation.ui.languages.DownloadStatus.DOWNLOADING -> "Downloading model..."
-                            com.example.globaltranslation.ui.languages.DownloadStatus.FINALIZING -> "Finalizing..."
-                            com.example.globaltranslation.ui.languages.DownloadStatus.COMPLETE -> "Complete!"
+                            com.example.globaltranslation.ui.languages.DownloadStatus.DOWNLOADING -> "Downloading model (~10-30 MB)..."
                             com.example.globaltranslation.ui.languages.DownloadStatus.PAUSED -> "Paused (waiting for network)"
-                            com.example.globaltranslation.ui.languages.DownloadStatus.FAILED -> "Failed"
+                            com.example.globaltranslation.ui.languages.DownloadStatus.FAILED -> "Download failed"
                             else -> "Downloading..."
                         },
                         style = MaterialTheme.typography.labelSmall,
                         color = when (language.downloadStatus) {
-                            com.example.globaltranslation.ui.languages.DownloadStatus.COMPLETE -> MaterialTheme.colorScheme.primary
                             com.example.globaltranslation.ui.languages.DownloadStatus.PAUSED -> MaterialTheme.colorScheme.tertiary
                             com.example.globaltranslation.ui.languages.DownloadStatus.FAILED -> MaterialTheme.colorScheme.error
                             else -> MaterialTheme.colorScheme.secondary
                         }
                     )
-                    
-                    // Show percentage if available
-                    if (language.downloadProgress != null) {
-                        Text(
-                            text = "${(language.downloadProgress * 100).toInt()}%",
-                            style = MaterialTheme.typography.labelSmall,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.secondary
-                        )
-                    } else {
-                        Text(
-                            text = "~10-30 MB",
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
-                    }
                 }
                 Spacer(modifier = Modifier.height(4.dp))
                 
-                // Progress bar - determinate if we have progress, indeterminate otherwise
-                if (language.downloadProgress != null) {
-                    LinearProgressIndicator(
-                        progress = { language.downloadProgress },
-                        modifier = Modifier.fillMaxWidth(),
-                        color = when (language.downloadStatus) {
-                            com.example.globaltranslation.ui.languages.DownloadStatus.COMPLETE -> MaterialTheme.colorScheme.primary
-                            else -> MaterialTheme.colorScheme.secondary
-                        }
-                    )
-                } else {
-                    LinearProgressIndicator(
-                        modifier = Modifier.fillMaxWidth(),
-                        color = MaterialTheme.colorScheme.secondary
-                    )
-                }
+                // Indeterminate progress bar since ML Kit doesn't provide real progress
+                LinearProgressIndicator(
+                    modifier = Modifier.fillMaxWidth(),
+                    color = when (language.downloadStatus) {
+                        com.example.globaltranslation.ui.languages.DownloadStatus.FAILED -> MaterialTheme.colorScheme.error
+                        else -> MaterialTheme.colorScheme.secondary
+                    }
+                )
             }
         }
         }
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-private fun PopularLanguagePairsCarousel(
-    availableLanguages: List<LanguageModel>,
-    onLanguagePairSelected: (Pair<String, String>) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val popularPairs = listOf(
-        "en" to "es",  // English to Spanish
-        "en" to "fr",  // English to French
-        "en" to "de",  // English to German
-        "en" to "zh",  // English to Chinese
-        "en" to "ja",  // English to Japanese
-        "es" to "fr",  // Spanish to French
-        "fr" to "de"   // French to German
-    )
-    
-    val carouselState = rememberCarouselState(itemCount = { popularPairs.size })
-    
-    HorizontalCenteredHeroCarousel(
-        state = carouselState,
-        modifier = modifier
-    ) { index ->
-        val pair = popularPairs[index]
-        
-        // Check if both languages are downloaded
-        val fromLangDownloaded = availableLanguages.find { it.code == pair.first }?.isDownloaded ?: false
-        val toLangDownloaded = availableLanguages.find { it.code == pair.second }?.isDownloaded ?: false
-        val bothDownloaded = fromLangDownloaded && toLangDownloaded
-        
-        Card(
-            onClick = { onLanguagePairSelected(pair) },
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(120.dp),
-            elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = if (bothDownloaded) 
-                    MaterialTheme.colorScheme.primaryContainer 
-                else 
-                    MaterialTheme.colorScheme.surfaceVariant
-            )
-        ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center
-            ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = pair.first.uppercase(),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = if (bothDownloaded) 
-                            MaterialTheme.colorScheme.onPrimaryContainer 
-                        else 
-                            MaterialTheme.colorScheme.primary
-                    )
-                    
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowForward,
-                        contentDescription = null,
-                        tint = if (bothDownloaded) 
-                            MaterialTheme.colorScheme.onPrimaryContainer 
-                        else 
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                    )
-                    
-                    Text(
-                        text = pair.second.uppercase(),
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.Bold,
-                        color = if (bothDownloaded) 
-                            MaterialTheme.colorScheme.onPrimaryContainer 
-                        else 
-                            MaterialTheme.colorScheme.primary
-                    )
-                }
-                
-                Spacer(modifier = Modifier.height(8.dp))
-                
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    if (bothDownloaded) {
-                        Icon(
-                            imageVector = Icons.Default.CheckCircle,
-                            contentDescription = null,
-                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
-                            modifier = Modifier.size(16.dp)
-                        )
-                    }
-                    Text(
-                        text = if (bothDownloaded) 
-                            "Downloaded - Ready to use" 
-                        else 
-                            "Tap to download",
-                        style = MaterialTheme.typography.bodySmall,
-                        color = if (bothDownloaded) 
-                            MaterialTheme.colorScheme.onPrimaryContainer 
-                        else 
-                            MaterialTheme.colorScheme.onSurfaceVariant,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-        }
-    }
-}
 
 @PreviewScreenSizes
 @Composable
