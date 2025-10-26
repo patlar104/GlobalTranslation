@@ -1,6 +1,7 @@
 package com.example.globaltranslation.data.provider
 
 import com.example.globaltranslation.core.provider.TranslationProvider
+import com.example.globaltranslation.data.network.NetworkMonitor
 import com.example.globaltranslation.data.preferences.LanguageModelPreferences
 import com.google.mlkit.common.model.DownloadConditions
 import com.google.mlkit.common.model.RemoteModelManager
@@ -26,12 +27,14 @@ import javax.inject.Singleton
  * - **Thread-Safe**: All operations use concurrent data structures and mutex synchronization
  * - **Cached**: Translators are cached per language pair to avoid recreation overhead
  * - **Persistent**: Model download state is persisted via LanguageModelPreferences
+ * - **Network-Aware**: Uses WiFi when available, falls back to mobile data when WiFi unavailable
  * 
  * ## Key Features:
  * 1. **Automatic Model Management**: Downloads models when needed, tracks download state
  * 2. **Efficient Caching**: Reuses translator instances to minimize initialization time
  * 3. **Double-Checked Locking**: Prevents duplicate model downloads
  * 4. **Resource Cleanup**: Properly closes all translators on cleanup
+ * 5. **Smart Network Usage**: Prefers WiFi but allows mobile data fallback
  * 
  * ## Performance:
  * - First translation: 2-5 seconds (model download + initialization)
@@ -59,13 +62,15 @@ import javax.inject.Singleton
  * ```
  * 
  * @property languageModelPreferences Persists model download state across app restarts
+ * @property networkMonitor Monitors network connectivity for smart download behavior
  * @see com.example.globaltranslation.core.provider.TranslationProvider
  * @see MlKitConfig for configuration constants
  * @see MlKitErrorHandler for error handling utilities
  */
 @Singleton
 class MlKitTranslationProvider @Inject constructor(
-    private val languageModelPreferences: LanguageModelPreferences
+    private val languageModelPreferences: LanguageModelPreferences,
+    private val networkMonitor: NetworkMonitor
 ) : TranslationProvider {
     
     // Thread-safe caching of active translators
@@ -88,12 +93,13 @@ class MlKitTranslationProvider @Inject constructor(
      * This method handles the entire translation workflow:
      * 1. Validates input text (must not be blank)
      * 2. Gets or creates a translator for the language pair
-     * 3. Downloads models if needed (with WiFi requirement)
+     * 3. Downloads models if needed (WiFi preferred, mobile data fallback)
      * 4. Performs the actual translation
      * 
      * ## Model Download Behavior:
      * - Models are downloaded automatically on first use
-     * - Downloads require WiFi by default (configurable)
+     * - Prefers WiFi when available for faster downloads
+     * - Falls back to mobile data if WiFi is unavailable
      * - Download state is persisted across app restarts
      * - Double-checked locking prevents duplicate downloads
      * 
@@ -141,7 +147,9 @@ class MlKitTranslationProvider @Inject constructor(
                 downloadMutex.withLock {
                     // Double-check after acquiring lock
                     if (key !in modelsReady) {
-                        ensureModelDownloaded(translator, requireWifi = true)
+                        // Use WiFi if available, otherwise allow mobile data
+                        val requireWifi = networkMonitor.isOnWiFi()
+                        ensureModelDownloaded(translator, requireWifi)
                         modelsReady.add(key)
                         // Persist the download state
                         languageModelPreferences.markModelAsDownloaded(from, to)
@@ -209,7 +217,16 @@ class MlKitTranslationProvider @Inject constructor(
             
             // Use mutex to prevent concurrent downloads of the same model
             downloadMutex.withLock {
-                ensureModelDownloaded(translator, requireWifi)
+                // Smart network handling: use WiFi if available, otherwise allow mobile data
+                val actualRequireWifi = if (requireWifi) {
+                    // If user explicitly requires WiFi, check if WiFi is available
+                    // If not on WiFi but connected, still allow download on mobile data
+                    networkMonitor.isOnWiFi() || !networkMonitor.isConnected()
+                } else {
+                    // User doesn't require WiFi, allow any connection
+                    false
+                }
+                ensureModelDownloaded(translator, actualRequireWifi)
                 modelsReady.add(key)
                 // Persist the download state
                 languageModelPreferences.markModelAsDownloaded(from, to)

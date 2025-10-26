@@ -87,8 +87,10 @@ private fun LanguageScreenContent(
         
         // Popular language pairs carousel
         PopularLanguagePairsCarousel(
+            availableLanguages = uiState.availableLanguages,
             onLanguagePairSelected = { (fromLang, toLang) ->
                 // Start downloading both models for the selected pair
+                // ViewModel will check if already downloaded and skip if needed
                 onDownloadLanguage(fromLang)
                 onDownloadLanguage(toLang)
             },
@@ -514,6 +516,7 @@ private fun LanguageModelItem(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun PopularLanguagePairsCarousel(
+    availableLanguages: List<LanguageModel>,
     onLanguagePairSelected: (Pair<String, String>) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -535,6 +538,11 @@ private fun PopularLanguagePairsCarousel(
     ) { index ->
         val pair = popularPairs[index]
         
+        // Check if both languages are downloaded
+        val fromLangDownloaded = availableLanguages.find { it.code == pair.first }?.isDownloaded ?: false
+        val toLangDownloaded = availableLanguages.find { it.code == pair.second }?.isDownloaded ?: false
+        val bothDownloaded = fromLangDownloaded && toLangDownloaded
+        
         Card(
             onClick = { onLanguagePairSelected(pair) },
             modifier = Modifier
@@ -542,7 +550,10 @@ private fun PopularLanguagePairsCarousel(
                 .height(120.dp),
             elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
             colors = CardDefaults.cardColors(
-                containerColor = MaterialTheme.colorScheme.surfaceVariant
+                containerColor = if (bothDownloaded) 
+                    MaterialTheme.colorScheme.primaryContainer 
+                else 
+                    MaterialTheme.colorScheme.surfaceVariant
             )
         ) {
             Column(
@@ -560,31 +571,59 @@ private fun PopularLanguagePairsCarousel(
                         text = pair.first.uppercase(),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = if (bothDownloaded) 
+                            MaterialTheme.colorScheme.onPrimaryContainer 
+                        else 
+                            MaterialTheme.colorScheme.primary
                     )
                     
                     Icon(
                         imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                         contentDescription = null,
-                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                        tint = if (bothDownloaded) 
+                            MaterialTheme.colorScheme.onPrimaryContainer 
+                        else 
+                            MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     
                     Text(
                         text = pair.second.uppercase(),
                         style = MaterialTheme.typography.titleMedium,
                         fontWeight = FontWeight.Bold,
-                        color = MaterialTheme.colorScheme.primary
+                        color = if (bothDownloaded) 
+                            MaterialTheme.colorScheme.onPrimaryContainer 
+                        else 
+                            MaterialTheme.colorScheme.primary
                     )
                 }
                 
                 Spacer(modifier = Modifier.height(8.dp))
                 
-                Text(
-                    text = "Popular translation pair",
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    textAlign = TextAlign.Center
-                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    if (bothDownloaded) {
+                        Icon(
+                            imageVector = Icons.Default.CheckCircle,
+                            contentDescription = null,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer,
+                            modifier = Modifier.size(16.dp)
+                        )
+                    }
+                    Text(
+                        text = if (bothDownloaded) 
+                            "Downloaded - Ready to use" 
+                        else 
+                            "Tap to download",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = if (bothDownloaded) 
+                            MaterialTheme.colorScheme.onPrimaryContainer 
+                        else 
+                            MaterialTheme.colorScheme.onSurfaceVariant,
+                        textAlign = TextAlign.Center
+                    )
+                }
             }
         }
     }

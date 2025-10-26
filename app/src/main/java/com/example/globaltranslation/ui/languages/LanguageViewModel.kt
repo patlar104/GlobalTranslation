@@ -158,6 +158,19 @@ class LanguageViewModel @Inject constructor(
     fun downloadLanguage(languageCode: String) {
         if (languageCode == TranslateLanguage.ENGLISH) return // Already available
         
+        // Check if language is already downloaded
+        val language = _uiState.value.availableLanguages.find { it.code == languageCode }
+        if (language?.isDownloaded == true) {
+            // Language is already downloaded, skip download
+            return
+        }
+        
+        // Check if already downloading
+        if (language?.isDownloading == true) {
+            // Download already in progress, skip
+            return
+        }
+        
         // Check network state
         val networkState = _uiState.value.networkState
         val requireWifi = !_uiState.value.allowCellularDownloads
