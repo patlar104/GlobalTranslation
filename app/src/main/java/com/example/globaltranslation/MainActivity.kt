@@ -8,6 +8,8 @@ import com.example.globaltranslation.util.DeviceCompatibility
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -16,6 +18,7 @@ import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.Translate
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.adaptive.navigationsuite.NavigationSuiteScaffold
@@ -78,66 +81,72 @@ fun GloabTranslationApp() {
             // Strategy:
             // - Camera screen: Use fade transitions for smooth camera lifecycle management
             // - Other screens: Use slide + fade with spring physics for polished feel
-            AnimatedContent(
-                targetState = currentDestination,
-                transitionSpec = {
-                    // Use different animations based on screen type
-                    // Camera screen uses fade for smoother transitions
-                    val isCameraInvolved = targetState == AppDestinations.CAMERA || 
-                                          initialState == AppDestinations.CAMERA
-                    
-                    if (isCameraInvolved) {
-                        // Smooth fade for camera transitions to avoid jarring camera start/stop
-                        // Longer duration (400ms) provides smooth visual continuity
-                        fadeIn(
-                            animationSpec = tween(400, easing = FastOutSlowInEasing)
-                        ) togetherWith fadeOut(
-                            animationSpec = tween(400, easing = FastOutSlowInEasing)
-                        )
-                    } else {
-                        // Smooth slide + fade for other screens
-                        // Spring animations create natural, bouncy motion
-                        slideInHorizontally(
-                            initialOffsetX = { it / 4 }, // Reduced from 1/3 to 1/4 for subtler slide
-                            animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioMediumBouncy,
-                                stiffness = Spring.StiffnessMediumLow
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.background)
+            ) {
+                AnimatedContent(
+                    targetState = currentDestination,
+                    transitionSpec = {
+                        // Use different animations based on screen type
+                        // Camera screen uses fade for smoother transitions
+                        val isCameraInvolved = targetState == AppDestinations.CAMERA || 
+                                              initialState == AppDestinations.CAMERA
+                        
+                        if (isCameraInvolved) {
+                            // Smooth fade for camera transitions to avoid jarring camera start/stop
+                            // Longer duration (400ms) provides smooth visual continuity
+                            fadeIn(
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
+                            ) togetherWith fadeOut(
+                                animationSpec = tween(400, easing = FastOutSlowInEasing)
                             )
-                        ) + fadeIn(
-                            animationSpec = tween(350, easing = FastOutSlowInEasing)
-                        ) togetherWith slideOutHorizontally(
-                            targetOffsetX = { -it / 4 }, // Reduced from 1/3 to 1/4 for subtler slide
-                            animationSpec = spring(
-                                dampingRatio = Spring.DampingRatioMediumBouncy,
-                                stiffness = Spring.StiffnessMediumLow
+                        } else {
+                            // Smooth slide + fade for other screens
+                            // Spring animations create natural, bouncy motion
+                            slideInHorizontally(
+                                initialOffsetX = { it / 4 }, // Reduced from 1/3 to 1/4 for subtler slide
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMediumLow
+                                )
+                            ) + fadeIn(
+                                animationSpec = tween(350, easing = FastOutSlowInEasing)
+                            ) togetherWith slideOutHorizontally(
+                                targetOffsetX = { -it / 4 }, // Reduced from 1/3 to 1/4 for subtler slide
+                                animationSpec = spring(
+                                    dampingRatio = Spring.DampingRatioMediumBouncy,
+                                    stiffness = Spring.StiffnessMediumLow
+                                )
+                            ) + fadeOut(
+                                animationSpec = tween(350, easing = FastOutSlowInEasing)
                             )
-                        ) + fadeOut(
-                            animationSpec = tween(350, easing = FastOutSlowInEasing)
-                        )
-                    }
-                },
-                label = "screen_transition"
-            ) { destination ->
-                when (destination) {
-                    AppDestinations.CONVERSATION -> {
-                        ConversationScreen(
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
-                    AppDestinations.TEXT_INPUT -> {
-                        TextInputScreen(
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
-                    AppDestinations.CAMERA -> {
-                        CameraScreen(
-                            modifier = Modifier.padding(innerPadding)
-                        )
-                    }
-                    AppDestinations.LANGUAGES -> {
-                        LanguageScreen(
-                            modifier = Modifier.padding(innerPadding)
-                        )
+                        }
+                    },
+                    label = "screen_transition"
+                ) { destination ->
+                    when (destination) {
+                        AppDestinations.CONVERSATION -> {
+                            ConversationScreen(
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
+                        AppDestinations.TEXT_INPUT -> {
+                            TextInputScreen(
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
+                        AppDestinations.CAMERA -> {
+                            CameraScreen(
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
+                        AppDestinations.LANGUAGES -> {
+                            LanguageScreen(
+                                modifier = Modifier.padding(innerPadding)
+                            )
+                        }
                     }
                 }
             }
