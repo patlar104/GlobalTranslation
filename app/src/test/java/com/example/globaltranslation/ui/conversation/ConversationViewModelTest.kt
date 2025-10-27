@@ -48,7 +48,7 @@ class ConversationViewModelTest {
     @Test
     fun `initial state has default values`() = runTest {
         val (vm, _, _, _, _) = buildVm()
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         
         assertEquals(TranslateLanguage.ENGLISH, state.sourceLanguage)
         assertEquals(TranslateLanguage.SPANISH, state.targetLanguage)
@@ -67,7 +67,7 @@ class ConversationViewModelTest {
         vm.startListening(TranslateLanguage.ENGLISH)
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertTrue(state.isListening)
         assertTrue(speech.isListening)
     }
@@ -91,11 +91,11 @@ class ConversationViewModelTest {
     fun `speech recognition ReadyForSpeech updates state`() = runTest {
         val (vm, _, speech, _, _) = buildVm()
         
+        // startListening automatically emits ReadyForSpeech
         vm.startListening(TranslateLanguage.ENGLISH)
-        speech.emitEvent(SpeechResult.ReadyForSpeech)
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertTrue(state.isListeningReady)
         assertTrue(state.isDetectingSpeech)
     }
@@ -105,10 +105,12 @@ class ConversationViewModelTest {
         val (vm, _, speech, _, _) = buildVm()
         
         vm.startListening(TranslateLanguage.ENGLISH)
+        advanceUntilIdle()
+        
         speech.emitEvent(SpeechResult.PartialResult("Hello"))
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertEquals("Hello", state.partialSpeechText)
     }
     
@@ -118,10 +120,12 @@ class ConversationViewModelTest {
         translation.translatedPrefix = "Hola"
         
         vm.startListening(TranslateLanguage.ENGLISH)
+        advanceUntilIdle()
+        
         speech.emitResult("Hello")
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertFalse(state.isListening)
         assertEquals("", state.partialSpeechText)
         assertTrue(state.conversationHistory.isNotEmpty())
@@ -134,10 +138,12 @@ class ConversationViewModelTest {
         val (vm, _, speech, _, _) = buildVm()
         
         vm.startListening(TranslateLanguage.ENGLISH)
+        advanceUntilIdle()
+        
         speech.emitError("Audio error")
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertFalse(state.isListening)
         assertNotNull(state.error)
         assertTrue(state.error?.contains("Audio error") == true)
@@ -148,15 +154,15 @@ class ConversationViewModelTest {
         val (vm, _, speech, _, _) = buildVm()
         
         vm.startListening(TranslateLanguage.ENGLISH)
-        speech.emitEvent(SpeechResult.ReadyForSpeech)
         advanceUntilIdle()
         
-        assertTrue(vm.uiState.first().isDetectingSpeech)
+        // ReadyForSpeech is automatically emitted by startListening
+        assertTrue(vm.uiState.value.isDetectingSpeech)
         
         speech.emitEvent(SpeechResult.EndOfSpeech)
         advanceUntilIdle()
         
-        assertFalse(vm.uiState.first().isDetectingSpeech)
+        assertFalse(vm.uiState.value.isDetectingSpeech)
     }
     
     @Test
@@ -166,12 +172,12 @@ class ConversationViewModelTest {
         vm.startListening(TranslateLanguage.ENGLISH)
         advanceUntilIdle()
         
-        assertTrue(vm.uiState.first().isListening)
+        assertTrue(vm.uiState.value.isListening)
         
         vm.stopListening()
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertFalse(state.isListening)
         assertFalse(state.isListeningReady)
         assertFalse(state.isDetectingSpeech)
@@ -184,10 +190,12 @@ class ConversationViewModelTest {
         translation.shouldSucceed = false
         
         vm.startListening(TranslateLanguage.ENGLISH)
+        advanceUntilIdle()
+        
         speech.emitResult("Hello")
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertFalse(state.isTranslating)
         assertNotNull(state.error)
         assertTrue(state.error?.contains("Translation failed") == true)
@@ -203,10 +211,12 @@ class ConversationViewModelTest {
         advanceUntilIdle()
         
         vm.startListening(TranslateLanguage.FRENCH)
+        advanceUntilIdle()
+        
         speech.emitResult("Bonjour")
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertNotNull(state.error)
         assertTrue(state.error?.contains("English") == true)
     }
@@ -216,10 +226,12 @@ class ConversationViewModelTest {
         val (vm, _, _, tts, _) = buildVm()
         
         vm.speakText("Hello", TranslateLanguage.ENGLISH)
+        advanceUntilIdle()
+        
         tts.emitEvent(TtsEvent.Started)
         advanceUntilIdle()
         
-        assertTrue(vm.uiState.first().isSpeaking)
+        assertTrue(vm.uiState.value.isSpeaking)
     }
     
     @Test
@@ -233,7 +245,7 @@ class ConversationViewModelTest {
         tts.emitEvent(TtsEvent.Completed)
         advanceUntilIdle()
         
-        assertFalse(vm.uiState.first().isSpeaking)
+        assertFalse(vm.uiState.value.isSpeaking)
     }
     
     @Test
@@ -241,10 +253,12 @@ class ConversationViewModelTest {
         val (vm, _, _, tts, _) = buildVm()
         
         vm.speakText("Hello", TranslateLanguage.ENGLISH)
+        advanceUntilIdle()
+        
         tts.emitEvent(TtsEvent.Error("TTS failed"))
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertFalse(state.isSpeaking)
         assertNotNull(state.error)
         assertTrue(state.error?.contains("TTS") == true)
@@ -257,7 +271,7 @@ class ConversationViewModelTest {
         vm.setSourceLanguage(TranslateLanguage.FRENCH)
         advanceUntilIdle()
         
-        assertEquals(TranslateLanguage.FRENCH, vm.uiState.first().sourceLanguage)
+        assertEquals(TranslateLanguage.FRENCH, vm.uiState.value.sourceLanguage)
     }
     
     @Test
@@ -267,7 +281,7 @@ class ConversationViewModelTest {
         vm.setTargetLanguage(TranslateLanguage.GERMAN)
         advanceUntilIdle()
         
-        assertEquals(TranslateLanguage.GERMAN, vm.uiState.first().targetLanguage)
+        assertEquals(TranslateLanguage.GERMAN, vm.uiState.value.targetLanguage)
     }
     
     @Test
@@ -281,7 +295,7 @@ class ConversationViewModelTest {
         vm.swapLanguages()
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertEquals(TranslateLanguage.GERMAN, state.sourceLanguage)
         assertEquals(TranslateLanguage.ENGLISH, state.targetLanguage)
     }
@@ -290,30 +304,30 @@ class ConversationViewModelTest {
     fun `toggleAutoPlay toggles auto-play state`() = runTest {
         val (vm, _, _, _, _) = buildVm()
         
-        assertTrue(vm.uiState.first().autoPlayTranslation)
+        assertTrue(vm.uiState.value.autoPlayTranslation)
         
         vm.toggleAutoPlay()
         advanceUntilIdle()
-        assertFalse(vm.uiState.first().autoPlayTranslation)
+        assertFalse(vm.uiState.value.autoPlayTranslation)
         
         vm.toggleAutoPlay()
         advanceUntilIdle()
-        assertTrue(vm.uiState.first().autoPlayTranslation)
+        assertTrue(vm.uiState.value.autoPlayTranslation)
     }
     
     @Test
     fun `toggleSavedHistory toggles history visibility`() = runTest {
         val (vm, _, _, _, _) = buildVm()
         
-        assertFalse(vm.uiState.first().showSavedHistory)
+        assertFalse(vm.uiState.value.showSavedHistory)
         
         vm.toggleSavedHistory()
         advanceUntilIdle()
-        assertTrue(vm.uiState.first().showSavedHistory)
+        assertTrue(vm.uiState.value.showSavedHistory)
         
         vm.toggleSavedHistory()
         advanceUntilIdle()
-        assertFalse(vm.uiState.first().showSavedHistory)
+        assertFalse(vm.uiState.value.showSavedHistory)
     }
     
     @Test
@@ -321,11 +335,15 @@ class ConversationViewModelTest {
         val (vm, _, _, _, _) = buildVm()
         
         vm.refreshConversationHistory()
+        // Immediately check that history is shown (this happens synchronously)
+        assertTrue(vm.uiState.value.showSavedHistory)
+        
+        // Wait for the refresh to complete (800ms delay in implementation)
+        testScheduler.advanceTimeBy(1000)
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
-        assertTrue(state.showSavedHistory)
-        assertFalse(state.isRefreshing)
+        // After refresh completes, isRefreshing should be false
+        assertFalse(vm.uiState.value.isRefreshing)
     }
     
     @Test
@@ -334,11 +352,11 @@ class ConversationViewModelTest {
         
         vm.toggleSavedHistory()
         advanceUntilIdle()
-        assertTrue(vm.uiState.first().showSavedHistory)
+        assertTrue(vm.uiState.value.showSavedHistory)
         
         vm.hideSavedHistory()
         advanceUntilIdle()
-        assertFalse(vm.uiState.first().showSavedHistory)
+        assertFalse(vm.uiState.value.showSavedHistory)
     }
     
     @Test
@@ -360,15 +378,17 @@ class ConversationViewModelTest {
         translation.translatedPrefix = "Hola"
         
         vm.startListening(TranslateLanguage.ENGLISH)
+        advanceUntilIdle()
+        
         speech.emitResult("Hello")
         advanceUntilIdle()
         
-        assertTrue(vm.uiState.first().conversationHistory.isNotEmpty())
+        assertTrue(vm.uiState.value.conversationHistory.isNotEmpty())
         
         vm.clearConversation()
         advanceUntilIdle()
         
-        assertTrue(vm.uiState.first().conversationHistory.isEmpty())
+        assertTrue(vm.uiState.value.conversationHistory.isEmpty())
         assertTrue(repo.cleared)
     }
     
@@ -378,15 +398,17 @@ class ConversationViewModelTest {
         translation.shouldSucceed = false
         
         vm.startListening(TranslateLanguage.ENGLISH)
+        advanceUntilIdle()
+        
         speech.emitResult("Hello")
         advanceUntilIdle()
         
-        assertNotNull(vm.uiState.first().error)
+        assertNotNull(vm.uiState.value.error)
         
         vm.clearError()
         advanceUntilIdle()
         
-        assertNull(vm.uiState.first().error)
+        assertNull(vm.uiState.value.error)
     }
     
     @Test
@@ -395,9 +417,11 @@ class ConversationViewModelTest {
         translation.translatedPrefix = "Hola"
         
         // Ensure auto-play is enabled
-        assertTrue(vm.uiState.first().autoPlayTranslation)
+        assertTrue(vm.uiState.value.autoPlayTranslation)
         
         vm.startListening(TranslateLanguage.ENGLISH)
+        advanceUntilIdle()
+        
         speech.emitResult("Hello")
         advanceUntilIdle()
         
@@ -405,7 +429,7 @@ class ConversationViewModelTest {
         tts.emitEvent(TtsEvent.Started)
         advanceUntilIdle()
         
-        assertTrue(vm.uiState.first().isSpeaking)
+        assertTrue(vm.uiState.value.isSpeaking)
     }
     
     @Test
@@ -437,7 +461,7 @@ class ConversationViewModelTest {
         repo.emitConversation(turn)
         advanceUntilIdle()
         
-        val state = vm.uiState.first()
+        val state = vm.uiState.value
         assertTrue(state.savedHistory.contains(turn))
     }
 }
