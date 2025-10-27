@@ -22,6 +22,7 @@ applyTo: '**/*'
 - **JVM Target**: 11 (must be aligned between Java and Kotlin compileOptions)
 - **Build command**: `.\gradlew build` (PowerShell) or `./gradlew build` (bash)
 - **16KB Page Size**: Full ARM64 support with Google Play compliance
+- **Performance Optimizations**: Parallel builds enabled, 4GB heap, build caching active
 
 ### Essential Plugin Configuration
 ```kotlin
@@ -250,6 +251,21 @@ DeviceCompatibility.logPageSizeInfo()  // Called in MainActivity.onCreate()
 - All dependencies in `gradle/libs.versions.toml`
 - Use `libs.` references in build files: `implementation(libs.hilt.android)`
 - **KSP Version Format**: `2.2.20-2.0.2` (changed from 1.0.x to 2.0.x)
+
+### Build Performance Optimization
+```kotlin
+// gradle.properties - optimized for multi-module builds
+org.gradle.jvmargs=-Xmx4096m -Dfile.encoding=UTF-8 -XX:+UseParallelGC
+org.gradle.parallel=true              // Parallel module builds
+org.gradle.caching=true               // Build cache enabled
+org.gradle.configureondemand=true     // On-demand configuration
+
+// Recommended CI/CD build command
+./gradlew build --build-cache --parallel --stacktrace --no-daemon
+
+// Fast incremental builds (local development)
+./gradlew assembleDebug --build-cache --parallel
+```
 
 ### Testing Strategy
 ```kotlin
