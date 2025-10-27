@@ -9,6 +9,10 @@ class FakeTextToSpeechProvider : TextToSpeechProvider {
     val speaks = mutableListOf<Pair<String, String>>()
     private val events = MutableSharedFlow<TtsEvent>(replay = 0)
 
+    fun emitEvent(event: TtsEvent) {
+        events.tryEmit(event)
+    }
+
     override fun speak(text: String, languageCode: String): Flow<TtsEvent> {
         speaks += text to languageCode
         return events
