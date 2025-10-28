@@ -16,7 +16,18 @@ import kotlinx.coroutines.flow.Flow
  * - Uses Room's coroutine support for async operations
  * - Flow-based queries for reactive UI updates
  * - Optimized SQL queries with proper indexing
- * - Conflict resolution strategies for robust data management
+ * - OnConflictStrategy.REPLACE for idempotent insert operations
+ * 
+ * ## Conflict Strategy Design:
+ * We use OnConflictStrategy.REPLACE instead of other strategies because:
+ * - **REPLACE**: Allows idempotent operations (safe to retry same insert)
+ * - **ABORT** (default): Would throw exception on conflict (not desired)
+ * - **IGNORE**: Would silently fail updates (data could become stale)
+ * - **FAIL**: Would crash the app (unacceptable UX)
+ * 
+ * REPLACE is chosen because conversation timestamps are unique, and if a
+ * duplicate insert occurs (e.g., from retry logic), we want the latest data
+ * to overwrite the old data rather than fail or be ignored.
  * 
  * ## Performance Considerations:
  * - All queries are optimized by Room compiler
@@ -26,18 +37,14 @@ import kotlinx.coroutines.flow.Flow
  * 
  * ## Example Usage:
  * ```kotlin
- * @Dao
- * interface ConversationDao {
- *     // Inject via Hilt, used by repository
- *     @Inject lateinit var dao: ConversationDao
+ * // In Repository (correct usage pattern)
+ * @Singleton
+ * class RoomConversationRepository @Inject constructor(
+ *     private val dao: ConversationDao  // DAO injected into repository
+ * ) : ConversationRepository {
  *     
- *     // Observe all conversations
- *     dao.getAllConversations().collect { conversations ->
- *         updateUI(conversations)
- *     }
- *     
- *     // Insert a conversation
- *     dao.insertConversation(entity)
+ *     override fun getConversations(): Flow<List<ConversationTurn>> = 
+ *         dao.getAllConversations().map { it.map { entity -> entity.toDomainModel() } }
  * }
  * ```
  * 
@@ -80,15 +87,17 @@ interface ConversationDao {
     fun getAllConversations(): Flow<List<ConversationEntity>>
     
     /**
-     * Inserts a new conversation turn.
+     * Inserts a new conversation turn with REPLACE conflict strategy.
      * 
      * Uses REPLACE conflict strategy: if a conversation with the same timestamp
-     * already exists, it will be replaced. This effectively makes this an upsert.
+     * already exists, it will be replaced. This makes the operation idempotent,
+     * which is important for retry logic and data consistency.
      * 
-     * ## Conflict Strategy:
-     * - OnConflictStrategy.REPLACE: Replaces existing row with same primary key
-     * - Alternative would be ABORT, IGNORE, or FAIL
-     * - REPLACE chosen for idempotent behavior
+     * ## Why REPLACE?
+     * - Timestamps are unique (primary key) - unlikely to have real conflicts
+     * - If conflict occurs (e.g., from retry), we want latest data to win
+     * - Alternative strategies like ABORT would throw exceptions (bad UX)
+     * - Alternative IGNORE would silently fail updates (stale data risk)
      * 
      * ## Performance:
      * - Single insert: ~1-5ms on modern devices
@@ -100,7 +109,7 @@ interface ConversationDao {
      * - Room handles threading automatically
      * - Safe to call from any coroutine context
      * 
-     * @param conversation The conversation entity to insert
+     * @param conversation The conversation entity to insert or replace
      * 
      * ## Example:
      * ```kotlin

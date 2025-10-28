@@ -33,9 +33,12 @@ import javax.inject.Singleton
  * ## Performance Characteristics:
  * - Insert: O(1) - ~1-5ms per conversation
  * - Query All: O(n) - ~10-50ms for 100 items
- * - Query Filtered: O(log n) with proper indexing
  * - Delete: O(1) - ~1-2ms per conversation
  * - Clear All: O(n) - ~10-100ms depending on size
+ * 
+ * Note: The DAO provides a language pair filter method which benefits
+ * from database indexing. This repository exposes the common getAll API
+ * by default, but filtered queries are available via the DAO if needed.
  * 
  * ## Database Schema:
  * - Table: conversations
