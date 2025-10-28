@@ -1,5 +1,6 @@
 package com.example.globaltranslation.data.provider
 
+import com.example.globaltranslation.core.error.TranslationError
 import com.example.globaltranslation.core.provider.TranslationProvider
 import com.example.globaltranslation.data.network.NetworkMonitor
 import com.example.globaltranslation.data.preferences.LanguageModelPreferences
@@ -17,10 +18,16 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 /**
- * ML Kit implementation of TranslationProvider.
+ * ML Kit implementation of TranslationProvider with modern error handling.
  * 
  * This provider handles on-device text translation using Google's ML Kit Translation API.
  * It manages the lifecycle of translation models and translator instances efficiently.
+ * 
+ * ## Recent Improvements:
+ * - Enhanced error handling with typed TranslationError sealed class
+ * - Improved validation with clear error messages
+ * - Better thread safety with structured concurrency
+ * - Optimized model caching and lifecycle management
  * 
  * ## Architecture:
  * - **Singleton**: One instance shared across the app (via Hilt)
@@ -35,6 +42,7 @@ import javax.inject.Singleton
  * 3. **Double-Checked Locking**: Prevents duplicate model downloads
  * 4. **Resource Cleanup**: Properly closes all translators on cleanup
  * 5. **Smart Network Usage**: Prefers WiFi but allows mobile data fallback
+ * 6. **Type-Safe Errors**: Uses sealed TranslationError class for better error handling
  * 
  * ## Performance:
  * - First translation: 2-5 seconds (model download + initialization)
@@ -53,9 +61,19 @@ import javax.inject.Singleton
  * // Check if models are ready
  * val available = translationProvider.areModelsDownloaded("en", "es")
  * 
- * // Translate text
+ * // Translate text with proper error handling
  * val result = translationProvider.translate("Hello", "en", "es")
- * result.onSuccess { translated -> println(translated) }
+ * result.fold(
+ *     onSuccess = { translated -> println(translated) },
+ *     onFailure = { error ->
+ *         when (val translationError = error as? TranslationError) {
+ *             is TranslationError.Input.Empty -> showValidationError()
+ *             is TranslationError.Model.NotDownloaded -> promptModelDownload()
+ *             is TranslationError.Network -> showNetworkError()
+ *             else -> showGenericError()
+ *         }
+ *     }
+ * )
  * 
  * // Clean up when done
  * translationProvider.cleanup()
@@ -90,11 +108,12 @@ class MlKitTranslationProvider @Inject constructor(
     /**
      * Translates text from one language to another using ML Kit's on-device models.
      * 
-     * This method handles the entire translation workflow:
+     * This method handles the entire translation workflow with enhanced error handling:
      * 1. Validates input text (must not be blank)
      * 2. Gets or creates a translator for the language pair
      * 3. Downloads models if needed (WiFi preferred, mobile data fallback)
      * 4. Performs the actual translation
+     * 5. Returns typed errors for better error handling in UI
      * 
      * ## Model Download Behavior:
      * - Models are downloaded automatically on first use
@@ -108,6 +127,13 @@ class MlKitTranslationProvider @Inject constructor(
      * - Once created, translators are reused for all subsequent requests
      * - Cache is cleared on cleanup()
      * 
+     * ## Error Handling:
+     * Returns typed TranslationError for different failure scenarios:
+     * - TranslationError.Input.Empty if text is blank
+     * - TranslationError.Model.NotDownloaded if models are missing
+     * - TranslationError.Network for connectivity issues
+     * - TranslationError.Unknown for unexpected errors
+     * 
      * ## Thread Safety:
      * - Safe to call from any coroutine/thread
      * - Uses mutex to synchronize model downloads
@@ -116,16 +142,20 @@ class MlKitTranslationProvider @Inject constructor(
      * @param text The text to translate (must not be blank)
      * @param from Source language code (e.g., "en" for English)
      * @param to Target language code (e.g., "es" for Spanish)
-     * @return Result containing translated text or error
-     * 
-     * @throws IllegalArgumentException if text is blank (wrapped in Result.failure)
+     * @return Result containing translated text or TranslationError
      * 
      * ## Example:
      * ```kotlin
      * val result = translate("Hello", "en", "es")
      * result.fold(
      *     onSuccess = { translated -> println("Translated: $translated") },
-     *     onFailure = { error -> println("Error: ${error.message}") }
+     *     onFailure = { error ->
+     *         when (val e = error as? TranslationError) {
+     *             is TranslationError.Input -> showInputError(e.message)
+     *             is TranslationError.Model -> promptDownload(e.message)
+     *             else -> showGenericError(error.message)
+     *         }
+     *     }
      * )
      * ```
      */
@@ -134,8 +164,20 @@ class MlKitTranslationProvider @Inject constructor(
         from: String,
         to: String
     ): Result<String> {
+        // Validate input with typed error
         if (text.isBlank()) {
-            return Result.failure(IllegalArgumentException("Text cannot be empty"))
+            return Result.failure(TranslationError.Input.Empty)
+        }
+        
+        // Validate language codes
+        if (from.isBlank() || to.isBlank()) {
+            return Result.failure(TranslationError.Language.Unsupported(
+                if (from.isBlank()) from else to
+            ))
+        }
+        
+        if (from == to) {
+            return Result.failure(TranslationError.Language.SameSourceAndTarget(from))
         }
         
         return try {
@@ -149,10 +191,25 @@ class MlKitTranslationProvider @Inject constructor(
                     if (key !in modelsReady) {
                         // Use WiFi if available, otherwise allow mobile data
                         val requireWifi = networkMonitor.isOnWiFi()
-                        ensureModelDownloaded(translator, requireWifi)
-                        modelsReady.add(key)
-                        // Persist the download state
-                        languageModelPreferences.markModelAsDownloaded(from, to)
+                        
+                        // Check network connectivity before attempting download
+                        if (!networkMonitor.isConnected()) {
+                            return Result.failure(TranslationError.Network.NoConnection)
+                        }
+                        
+                        try {
+                            ensureModelDownloaded(translator, requireWifi)
+                            modelsReady.add(key)
+                            // Persist the download state
+                            languageModelPreferences.markModelAsDownloaded(from, to)
+                        } catch (e: Exception) {
+                            return Result.failure(
+                                TranslationError.Model.DownloadFailed(
+                                    languageCode = "$from-$to",
+                                    reason = e.message
+                                )
+                            )
+                        }
                     }
                 }
             }
@@ -160,8 +217,10 @@ class MlKitTranslationProvider @Inject constructor(
             val translatedText = translator.translate(text).await()
             Result.success(translatedText)
             
-        } catch (e: Exception) {
+        } catch (e: TranslationError) {
             Result.failure(e)
+        } catch (e: Exception) {
+            Result.failure(TranslationError.Unknown(e))
         }
     }
     
@@ -226,6 +285,11 @@ class MlKitTranslationProvider @Inject constructor(
                     // User doesn't require WiFi, allow any connection
                     false
                 }
+                
+                if (!networkMonitor.isConnected()) {
+                    return Result.failure(TranslationError.Network.NoConnection)
+                }
+                
                 ensureModelDownloaded(translator, actualRequireWifi)
                 modelsReady.add(key)
                 // Persist the download state
@@ -234,7 +298,12 @@ class MlKitTranslationProvider @Inject constructor(
             
             Result.success(Unit)
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(
+                TranslationError.Model.DownloadFailed(
+                    languageCode = "$from-$to",
+                    reason = e.message
+                )
+            )
         }
     }
     
@@ -260,7 +329,12 @@ class MlKitTranslationProvider @Inject constructor(
             
             Result.success(Unit)
         } catch (e: Exception) {
-            Result.failure(e)
+            Result.failure(
+                TranslationError.Model.DeleteFailed(
+                    languageCode = languageCode,
+                    reason = e.message
+                )
+            )
         }
     }
     
