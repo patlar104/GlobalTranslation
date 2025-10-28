@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 
 class FakeSpeechProvider : SpeechProvider {
-    private val _events = MutableSharedFlow<SpeechResult>()
+    private val _events = MutableSharedFlow<SpeechResult>(replay = 1, extraBufferCapacity = 10)
     
     var isListening = false
         private set

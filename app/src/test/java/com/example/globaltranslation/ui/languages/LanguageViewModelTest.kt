@@ -45,13 +45,14 @@ class LanguageViewModelTest {
     fun `DownloadStatus enum has all expected values`() {
         val statuses = DownloadStatus.values()
         
+        // Verify simplified enum values (PREPARING, FINALIZING, COMPLETE removed for honesty)
         assertTrue(statuses.contains(DownloadStatus.IDLE))
-        assertTrue(statuses.contains(DownloadStatus.PREPARING))
         assertTrue(statuses.contains(DownloadStatus.DOWNLOADING))
-        assertTrue(statuses.contains(DownloadStatus.FINALIZING))
-        assertTrue(statuses.contains(DownloadStatus.COMPLETE))
         assertTrue(statuses.contains(DownloadStatus.FAILED))
         assertTrue(statuses.contains(DownloadStatus.PAUSED))
+        
+        // Verify we have exactly 4 values (simplified from 7)
+        assertEquals(4, statuses.size)
     }
     
     @Test

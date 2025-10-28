@@ -158,6 +158,19 @@ class LanguageViewModel @Inject constructor(
     fun downloadLanguage(languageCode: String) {
         if (languageCode == TranslateLanguage.ENGLISH) return // Already available
         
+        // Check if language is already downloaded
+        val language = _uiState.value.availableLanguages.find { it.code == languageCode }
+        if (language?.isDownloaded == true) {
+            // Language is already downloaded, skip download
+            return
+        }
+        
+        // Check if already downloading
+        if (language?.isDownloading == true) {
+            // Download already in progress, skip
+            return
+        }
+        
         // Check network state
         val networkState = _uiState.value.networkState
         val requireWifi = !_uiState.value.allowCellularDownloads
@@ -200,15 +213,11 @@ class LanguageViewModel @Inject constructor(
      * Starts the actual download process with status updates.
      */
     private fun startDownload(languageCode: String, requireWifi: Boolean) {
-        // Update to PREPARING state
-        updateLanguageStatus(languageCode, DownloadStatus.PREPARING, 0f, isDownloading = true)
+        // Update to DOWNLOADING state with indeterminate progress
+        updateLanguageStatus(languageCode, DownloadStatus.DOWNLOADING, null, isDownloading = true)
         
         val downloadJob = viewModelScope.launch {
             try {
-                // Simulate progress by updating status at key points
-                kotlinx.coroutines.delay(500) // Brief delay for "Preparing"
-                updateLanguageStatus(languageCode, DownloadStatus.DOWNLOADING, 0.3f, isDownloading = true)
-                
                 val result = translationProvider.downloadModels(
                     TranslateLanguage.ENGLISH,
                     languageCode,
@@ -217,10 +226,6 @@ class LanguageViewModel @Inject constructor(
                 
                 result.fold(
                     onSuccess = {
-                        // Update to finalizing before completing
-                        updateLanguageStatus(languageCode, DownloadStatus.FINALIZING, 0.9f, isDownloading = true)
-                        kotlinx.coroutines.delay(300) // Brief delay for "Finalizing"
-                        
                         // Invalidate cache and mark as complete
                         downloadStatusCache.remove(languageCode)
                         pendingDownloads.remove(languageCode)
@@ -231,21 +236,12 @@ class LanguageViewModel @Inject constructor(
                                 lang.copy(
                                     isDownloading = false, 
                                     isDownloaded = true, 
-                                    downloadProgress = 1.0f,
-                                    downloadStatus = DownloadStatus.COMPLETE
+                                    downloadProgress = null,
+                                    downloadStatus = DownloadStatus.IDLE
                                 )
                             } else lang
                         }
                         _uiState.value = _uiState.value.copy(availableLanguages = finalUpdatedLanguages)
-                        
-                        // Clear progress after a moment
-                        kotlinx.coroutines.delay(500)
-                        val clearedLanguages = _uiState.value.availableLanguages.map { lang ->
-                            if (lang.code == languageCode) {
-                                lang.copy(downloadProgress = null, downloadStatus = DownloadStatus.IDLE)
-                            } else lang
-                        }
-                        _uiState.value = _uiState.value.copy(availableLanguages = clearedLanguages)
                     },
                     onFailure = { exception ->
                         activeDownloads.remove(languageCode)
@@ -435,12 +431,9 @@ data class LanguageModel(
  * Represents the status of a model download.
  */
 enum class DownloadStatus {
-    IDLE,
-    PREPARING,      // Initializing download
+    IDLE,           // Not downloading
     DOWNLOADING,    // Active download
-    FINALIZING,     // Processing downloaded model
-    COMPLETE,
-    FAILED,
+    FAILED,         // Download failed
     PAUSED          // Waiting for network
 }
 
