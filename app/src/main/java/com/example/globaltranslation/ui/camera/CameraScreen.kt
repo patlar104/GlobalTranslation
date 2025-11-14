@@ -40,6 +40,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
 import androidx.compose.ui.tooling.preview.PreviewScreenSizes
+import com.example.globaltranslation.core.model.TranslationError
 import com.example.globaltranslation.ui.components.MultiDevicePreview
 import com.example.globaltranslation.ui.components.DesignVariantPreview
 import com.example.globaltranslation.ui.components.PreviewScaffold
@@ -498,7 +499,7 @@ private fun CameraOverlayContent(
             exit = fadeOut(animationSpec = tween(200)) + 
                    shrinkVertically(animationSpec = tween(200))
         ) {
-            uiState.error?.let { errorMessage ->
+            uiState.error?.let { error ->
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     colors = CardDefaults.cardColors(
@@ -520,16 +521,19 @@ private fun CameraOverlayContent(
                             )
                             Column {
                                 Text(
-                                    text = errorMessage,
+                                    text = getErrorMessage(error),
                                     style = MaterialTheme.typography.bodyMedium,
                                     color = MaterialTheme.colorScheme.onErrorContainer
                                 )
-                                Spacer(modifier = Modifier.height(8.dp))
-                                Text(
-                                    text = "Download models for: ${getLanguageName(uiState.sourceLanguageCode)} and ${getLanguageName(uiState.targetLanguageCode)}",
-                                    style = MaterialTheme.typography.bodySmall,
-                                    color = MaterialTheme.colorScheme.onErrorContainer
-                                )
+                                // Show additional help for network errors
+                                if (error is TranslationError.NetworkError || error is TranslationError.TranslationFailed) {
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    Text(
+                                        text = "Download models for: ${getLanguageName(uiState.sourceLanguageCode)} and ${getLanguageName(uiState.targetLanguageCode)}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onErrorContainer
+                                    )
+                                }
                             }
                         }
                     }
@@ -935,7 +939,7 @@ private class CameraUiStatePreviewProvider : PreviewParameterProvider<CameraUiSt
             ),
             isFrozen = true
         ),
-        CameraUiState(error = "Models missing. Connect to WiFi to download.")
+        CameraUiState(error = TranslationError.NetworkError)
     )
 }
 
@@ -1071,6 +1075,24 @@ private fun getLanguageName(languageCode: String): String {
         "ar" -> "Arabic"
         "hi" -> "Hindi"
         else -> languageCode
+    }
+}
+
+/**
+ * Converts a TranslationError to a user-friendly error message.
+ */
+private fun getErrorMessage(error: TranslationError): String {
+    return when (error) {
+        is TranslationError.NoTextDetected -> 
+            "No text detected. Try again with clearer text."
+        is TranslationError.TranslationFailed -> 
+            "Translation failed${error.cause?.message?.let { ": $it" } ?: "."}"
+        is TranslationError.InvalidLanguagePair -> 
+            "Invalid language pair: ${getLanguageName(error.sourceLanguage)} to ${getLanguageName(error.targetLanguage)}"
+        is TranslationError.NetworkError -> 
+            "Network error. Connect to WiFi to download translation models."
+        is TranslationError.UnknownError -> 
+            "An unexpected error occurred${error.cause?.message?.let { ": $it" } ?: "."}"
     }
 }
 
