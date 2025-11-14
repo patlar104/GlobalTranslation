@@ -4,6 +4,7 @@ import android.graphics.Rect as AndroidRect
 import androidx.compose.ui.geometry.Rect
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.globaltranslation.core.model.TranslationError
 import com.example.globaltranslation.core.provider.CameraTranslationProvider
 import com.google.mlkit.nl.translate.TranslateLanguage
 import com.google.mlkit.vision.common.InputImage
@@ -129,21 +130,21 @@ class CameraViewModel @Inject constructor(
                         } else {
                             _uiState.value = _uiState.value.copy(
                                 isProcessing = false,
-                                error = "No text detected. Try again with clearer text."
+                                error = TranslationError.NoTextDetected
                             )
                         }
                     },
                     onFailure = { exception ->
                         _uiState.value = _uiState.value.copy(
                             isProcessing = false,
-                            error = "Translation failed: ${exception.message}"
+                            error = TranslationError.TranslationFailed(exception)
                         )
                     }
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     isProcessing = false,
-                    error = "Error: ${e.message}"
+                    error = TranslationError.UnknownError(e)
                 )
             }
         }
@@ -191,7 +192,7 @@ data class CameraUiState(
     val isProcessing: Boolean = false,
     val isFrozen: Boolean = false,
     val isFlashOn: Boolean = false,
-    val error: String? = null
+    val error: TranslationError? = null
 ) {
     /**
      * Validates that at least one language is English (required for ML Kit).
