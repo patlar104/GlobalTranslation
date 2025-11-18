@@ -27,12 +27,12 @@ class TextInputViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(TextInputUiState())
     val uiState: StateFlow<TextInputUiState> = _uiState.asStateFlow()
-    
+
     init {
         // Load translation history from repository on startup
         loadTranslationHistory()
     }
-    
+
     /**
      * Loads translation history from the repository.
      */
@@ -58,14 +58,14 @@ class TextInputViewModel @Inject constructor(
     fun translateText() {
         val currentState = _uiState.value
         val textToTranslate = currentState.inputText.trim()
-        
+
         if (textToTranslate.isEmpty()) {
             _uiState.value = currentState.copy(error = "Please enter text to translate")
             return
         }
-        
+
         // Validate language pair (ML Kit requires English as source or target)
-        if (!isValidLanguagePair(currentState.sourceLanguage, currentState.targetLanguage)) {
+        if (!validLanguagePair(currentState.sourceLanguage, currentState.targetLanguage)) {
             _uiState.value = currentState.copy(
                 error = "ML Kit requires English as source or target language. Please select English for one side."
             )
@@ -94,15 +94,15 @@ class TextInputViewModel @Inject constructor(
                             targetLang = currentState.targetLanguage,
                             timestamp = System.currentTimeMillis()
                         )
-                        
+
                         val updatedHistory = listOf(translation) + currentState.translationHistory
-                        
+
                         _uiState.value = currentState.copy(
                             currentTranslation = translation,
                             translationHistory = updatedHistory,
                             isTranslating = false
                         )
-                        
+
                         // Persist the translation to repository
                         viewModelScope.launch {
                             try {
@@ -188,14 +188,14 @@ class TextInputViewModel @Inject constructor(
             targetLanguage = translation.targetLang
         )
     }
-    
+
     /**
      * Copies text to input (overloaded version for text-only).
      */
     fun copyToInput(text: String) {
         _uiState.value = _uiState.value.copy(inputText = text)
     }
-    
+
     /**
      * Speaks the given text using text-to-speech.
      */
@@ -206,15 +206,15 @@ class TextInputViewModel @Inject constructor(
             }
         }
     }
-    
+
     /**
      * Validates that at least one language is English (required for ML Kit).
      * ML Kit only supports translation pairs with English.
      */
-    private fun isValidLanguagePair(sourceLanguage: String, targetLanguage: String): Boolean {
+    private fun validLanguagePair(sourceLanguage: String, targetLanguage: String): Boolean {
         return sourceLanguage == TranslateLanguage.ENGLISH || targetLanguage == TranslateLanguage.ENGLISH
     }
-    
+
     override fun onCleared() {
         super.onCleared()
         ttsProvider.cleanup()

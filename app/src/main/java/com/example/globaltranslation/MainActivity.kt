@@ -48,7 +48,7 @@ class MainActivity : ComponentActivity() {
         
         setContent {
             GlobalTranslationTheme {
-                GloabTranslationApp()
+                GlobalTranslationApp()
             }
         }
     }
@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
 
 @PreviewScreenSizes
 @Composable
-fun GloabTranslationApp() {
+fun GlobalTranslationApp() {
     var currentDestination by rememberSaveable { mutableStateOf(AppDestinations.CONVERSATION) }
 
     NavigationSuiteScaffold(
@@ -162,20 +162,4 @@ enum class AppDestinations(
     TEXT_INPUT("Text Input", Icons.Filled.Translate),
     CAMERA("Camera", Icons.Filled.CameraAlt),
     LANGUAGES("Languages", Icons.Filled.Language),
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    GlobalTranslationTheme {
-        Greeting("Android")
-    }
 }

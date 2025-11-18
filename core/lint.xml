@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Enable all rules that are enabled in the data module to prevent CannotEnableHidden warnings -->
+
+    <issue id="AppCompatMethod" severity="warning" />
+    <issue id="DuplicateStrings" severity="informational" />
+    <issue id="EasterEgg" severity="warning" />
+    <issue id="ExpensiveAssertion" severity="warning" />
+    <issue id="KotlinPropertyAccess" severity="warning" />
+    <issue id="LambdaLast" severity="warning" />
+    <issue id="LogConditional" severity="warning" />
+    <issue id="MangledCRLF" severity="warning" />
+    <issue id="MemberExtensionConflict" severity="warning" />
+    <issue id="NegativeMargin" severity="warning" />
+    <issue id="NoHardKeywords" severity="warning" />
+    <issue id="NoOp" severity="warning" />
+    <issue id="PermissionNamingConvention" severity="warning" />
+    <issue id="Registered" severity="warning" />
+    <issue id="SelectableText" severity="informational" />
+    <issue id="StopShip" severity="error" />
+    <issue id="StringFormatTrivial" severity="informational" />
+    <issue id="SyntheticAccessor" severity="informational" />
+    <issue id="ThreadConstraint" severity="error" />
+    <issue id="TypographyQuotes" severity="informational" />
+    <issue id="UnknownNullness" severity="warning" />
+    <issue id="UnusedIds" severity="informational" />
+    <issue id="WrongThreadInterprocedural" severity="informational" />
+</lint>

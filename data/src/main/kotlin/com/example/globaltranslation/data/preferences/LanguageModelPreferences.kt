@@ -13,14 +13,14 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 import javax.inject.Singleton
 
-private val Context.languageModelDataStore: DataStore<Preferences> by preferencesDataStore(
+internal val Context.languageModelDataStore: DataStore<Preferences> by preferencesDataStore(
     name = "language_models"
 )
 
 /**
  * DataStore-backed preferences for persisting downloaded language models.
  * Survives process death and app restarts.
- * 
+ *
  * Battery optimizations:
  * - Efficient DataStore usage with Flow-based access
  * - Optimized edit operations with minimal writes
@@ -28,7 +28,7 @@ private val Context.languageModelDataStore: DataStore<Preferences> by preference
  */
 @Singleton
 class LanguageModelPreferences @Inject constructor(
-    @ApplicationContext private val context: Context
+    @ApplicationContext context: Context
 ) {
     private val dataStore = context.languageModelDataStore
     
@@ -50,8 +50,8 @@ class LanguageModelPreferences @Inject constructor(
      */
     suspend fun markModelAsDownloaded(fromLanguage: String, toLanguage: String) {
         val key = "$fromLanguage-$toLanguage"
-        dataStore.edit { preferences: androidx.datastore.preferences.core.MutablePreferences ->
-            val current: Set<String> = preferences[DOWNLOADED_MODELS_KEY] ?: emptySet()
+        dataStore.edit { preferences ->
+            val current = preferences[DOWNLOADED_MODELS_KEY] ?: emptySet()
             preferences[DOWNLOADED_MODELS_KEY] = current + key
         }
     }
@@ -62,9 +62,9 @@ class LanguageModelPreferences @Inject constructor(
      * @param languageCode Language code to remove (e.g., "es")
      */
     suspend fun removeLanguageFromModels(languageCode: String) {
-        dataStore.edit { preferences: androidx.datastore.preferences.core.MutablePreferences ->
-            val current: Set<String> = preferences[DOWNLOADED_MODELS_KEY] ?: emptySet()
-            val filtered: Set<String> = current.filterNot { pair: String ->
+        dataStore.edit { preferences ->
+            val current = preferences[DOWNLOADED_MODELS_KEY] ?: emptySet()
+            val filtered = current.filterNot { pair ->
                 pair.startsWith("$languageCode-") || pair.endsWith("-$languageCode")
             }.toSet()
             preferences[DOWNLOADED_MODELS_KEY] = filtered
@@ -79,8 +79,8 @@ class LanguageModelPreferences @Inject constructor(
      */
     suspend fun isModelDownloaded(fromLanguage: String, toLanguage: String): Boolean {
         val key = "$fromLanguage-$toLanguage"
-        val preferences: Preferences = dataStore.data.first()
-        val downloaded: Set<String> = preferences[DOWNLOADED_MODELS_KEY] ?: emptySet()
+        val preferences = dataStore.data.first()
+        val downloaded = preferences[DOWNLOADED_MODELS_KEY] ?: emptySet()
         return key in downloaded
     }
     
@@ -88,7 +88,7 @@ class LanguageModelPreferences @Inject constructor(
      * Clears all downloaded model records.
      */
     suspend fun clearAll() {
-        dataStore.edit { preferences: androidx.datastore.preferences.core.MutablePreferences ->
+        dataStore.edit { preferences ->
             preferences.remove(DOWNLOADED_MODELS_KEY)
         }
     }

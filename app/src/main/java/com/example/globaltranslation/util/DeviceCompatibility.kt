@@ -20,8 +20,9 @@ object DeviceCompatibility {
                 val pageSize = android.system.Os.sysconf(android.system.OsConstants._SC_PAGESIZE)
                 Log.i(TAG, "System page size: $pageSize bytes (${pageSize / 1024}KB)")
                 
-                // Log architecture information
-                Log.i(TAG, "Device architecture: ${Build.CPU_ABI}")
+                // Log architecture information (using SUPPORTED_ABIS instead of deprecated CPU_ABI)
+                val primaryAbi = if (Build.SUPPORTED_ABIS.isNotEmpty()) Build.SUPPORTED_ABIS[0] else "unknown"
+                Log.i(TAG, "Device architecture: $primaryAbi")
                 Log.i(TAG, "Supported ABIs: ${Build.SUPPORTED_ABIS.joinToString()}")
                 
                 // Check if this is a 16KB page size device

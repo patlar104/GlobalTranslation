@@ -11,6 +11,7 @@ import com.example.globaltranslation.core.repository.ConversationRepository
 import com.example.globaltranslation.model.ConversationTurn
 import com.google.mlkit.nl.translate.TranslateLanguage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -32,17 +33,29 @@ class ConversationViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ConversationUiState())
     val uiState: StateFlow<ConversationUiState> = _uiState.asStateFlow()
-    
+
+    // Track the history collection job for proper cleanup
+    private var historyCollectionJob: Job? = null
+
     init {
         // Load conversation history from repository on startup
         loadConversationHistory()
     }
-    
+
+    companion object {
+        // Configurable delay for auto-hiding history after refresh (5 seconds)
+        private const val AUTO_HIDE_HISTORY_DELAY_MS = 5000L
+    }
+
     /**
      * Loads conversation history from the repository.
+     * Properly managed with Job tracking to prevent memory leaks.
      */
     private fun loadConversationHistory() {
-        viewModelScope.launch {
+        // Cancel any existing collection
+        historyCollectionJob?.cancel()
+
+        historyCollectionJob = viewModelScope.launch {
             conversationRepository.getConversations().collect { savedConversations ->
                 _uiState.value = _uiState.value.copy(
                     savedHistory = savedConversations
@@ -64,7 +77,7 @@ class ConversationViewModel @Inject constructor(
 
         viewModelScope.launch {
             val languageCode = getLanguageCodeForSpeech(forLanguage)
-            
+
             speechProvider.startListening(languageCode).collect { result ->
                 when (result) {
                     is SpeechResult.ReadyForSpeech -> {
@@ -73,11 +86,11 @@ class ConversationViewModel @Inject constructor(
                             isDetectingSpeech = true
                         )
                     }
-                    
+
                     is SpeechResult.PartialResult -> {
                         _uiState.value = _uiState.value.copy(partialSpeechText = result.text)
                     }
-                    
+
                     is SpeechResult.FinalResult -> {
                         _uiState.value = _uiState.value.copy(
                             isListening = false,
@@ -87,7 +100,7 @@ class ConversationViewModel @Inject constructor(
                         )
                         translateAndAddToConversation(result.text, forLanguage)
                     }
-                    
+
                     is SpeechResult.Error -> {
                         _uiState.value = _uiState.value.copy(
                             isListening = false,
@@ -97,7 +110,7 @@ class ConversationViewModel @Inject constructor(
                             error = result.message
                         )
                     }
-                    
+
                     is SpeechResult.EndOfSpeech -> {
                         _uiState.value = _uiState.value.copy(isDetectingSpeech = false)
                     }
@@ -124,21 +137,21 @@ class ConversationViewModel @Inject constructor(
      */
     private fun translateAndAddToConversation(text: String, sourceLanguage: String) {
         val targetLanguage = getTargetLanguage(sourceLanguage)
-        
+
         // Validate language pair (ML Kit requires English as source or target)
-        if (!isValidLanguagePair(sourceLanguage, targetLanguage)) {
+        if (!validLanguagePair(sourceLanguage, targetLanguage)) {
             _uiState.value = _uiState.value.copy(
                 error = "ML Kit requires English as source or target language. Please select English for one side."
             )
             return
         }
-        
+
         _uiState.value = _uiState.value.copy(isTranslating = true)
 
         viewModelScope.launch {
             try {
                 val result = translationProvider.translate(text, sourceLanguage, targetLanguage)
-                
+
                 result.fold(
                     onSuccess = { translatedText ->
                         val turn = ConversationTurn(
@@ -147,13 +160,13 @@ class ConversationViewModel @Inject constructor(
                             sourceLang = sourceLanguage,
                             targetLang = targetLanguage
                         )
-                        
+
                         val updatedConversation = _uiState.value.conversationHistory + turn
                         _uiState.value = _uiState.value.copy(
                             conversationHistory = updatedConversation,
                             isTranslating = false
                         )
-                        
+
                         // Persist the conversation turn (optional feature)
                         try {
                             conversationRepository.saveConversation(turn)
@@ -161,7 +174,7 @@ class ConversationViewModel @Inject constructor(
                             // Persistence failure doesn't break the UI
                             // Could log this for debugging
                         }
-                        
+
                         // Optionally speak the translation
                         if (_uiState.value.autoPlayTranslation) {
                             speakText(translatedText, targetLanguage)
@@ -193,9 +206,11 @@ class ConversationViewModel @Inject constructor(
                     is TtsEvent.Started -> {
                         _uiState.value = _uiState.value.copy(isSpeaking = true)
                     }
+
                     is TtsEvent.Completed -> {
                         _uiState.value = _uiState.value.copy(isSpeaking = false)
                     }
+
                     is TtsEvent.Error -> {
                         _uiState.value = _uiState.value.copy(
                             isSpeaking = false,
@@ -241,7 +256,7 @@ class ConversationViewModel @Inject constructor(
             autoPlayTranslation = !_uiState.value.autoPlayTranslation
         )
     }
-    
+
     /**
      * Toggles the saved history drawer visibility.
      */
@@ -250,7 +265,7 @@ class ConversationViewModel @Inject constructor(
             showSavedHistory = !_uiState.value.showSavedHistory
         )
     }
-    
+
     /**
      * Refreshes the conversation history when user pulls to refresh.
      */
@@ -259,16 +274,16 @@ class ConversationViewModel @Inject constructor(
             isRefreshing = true,
             showSavedHistory = true // Show history when refreshing
         )
-        
+
         viewModelScope.launch {
             try {
                 // Reload conversation history from repository
                 // The repository flow will automatically update the UI state
-                kotlinx.coroutines.delay(800) // Small delay for better UX
+                // No artificial delay needed - let the actual data fetch determine timing
                 _uiState.value = _uiState.value.copy(isRefreshing = false)
-                
-                // Auto-hide history after 5 seconds
-                kotlinx.coroutines.delay(5000)
+
+                // Auto-hide history after refresh completes
+                kotlinx.coroutines.delay(AUTO_HIDE_HISTORY_DELAY_MS)
                 if (!_uiState.value.isRefreshing) {
                     _uiState.value = _uiState.value.copy(showSavedHistory = false)
                 }
@@ -280,14 +295,14 @@ class ConversationViewModel @Inject constructor(
             }
         }
     }
-    
+
     /**
      * Manually hides the saved history.
      */
     fun hideSavedHistory() {
         _uiState.value = _uiState.value.copy(showSavedHistory = false)
     }
-    
+
     /**
      * Deletes a saved conversation turn.
      */
@@ -308,7 +323,7 @@ class ConversationViewModel @Inject constructor(
      */
     fun clearConversation() {
         _uiState.value = _uiState.value.copy(conversationHistory = emptyList())
-        
+
         // Also clear persisted conversations
         viewModelScope.launch {
             try {
@@ -355,17 +370,22 @@ class ConversationViewModel @Inject constructor(
             else -> "en-US"
         }
     }
-    
+
     /**
      * Validates that at least one language is English (required for ML Kit).
      * ML Kit only supports translation pairs with English.
      */
-    private fun isValidLanguagePair(sourceLanguage: String, targetLanguage: String): Boolean {
+    private fun validLanguagePair(sourceLanguage: String, targetLanguage: String): Boolean {
         return sourceLanguage == TranslateLanguage.ENGLISH || targetLanguage == TranslateLanguage.ENGLISH
     }
 
     override fun onCleared() {
         super.onCleared()
+        // Cancel the history collection job
+        historyCollectionJob?.cancel()
+        historyCollectionJob = null
+
+        // Cleanup providers
         speechProvider.cleanup()
         ttsProvider.cleanup()
     }

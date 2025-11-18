@@ -5,23 +5,33 @@
 # For more details, see
 #   http://developer.android.com/guide/developing/tools/proguard.html
 
-# Hilt ProGuard rules
--keep class dagger.** { *; }
--keep class javax.inject.** { *; }
+# ===== Optimization Configuration =====
+# R8 full mode optimizations (compatible with AGP 8.13.1+)
+-optimizationpasses 5
+-dontpreverify
+
+# Hilt ProGuard rules - allow optimization but keep structure
+-keep,allowobfuscation,allowoptimization @dagger.hilt.android.lifecycle.HiltViewModel class *
 -keep class * extends dagger.hilt.android.HiltAndroidApp
--keep class * extends dagger.hilt.android.lifecycle.HiltViewModel
--keep class * extends dagger.Module
+-keep @dagger.Module class *
 -keep @dagger.hilt.InstallIn class *
--keep @javax.inject.Inject class *
--keepclassmembers class * {
+
+# Keep Hilt generated components (R8 needs these for DI)
+-keep class * extends dagger.hilt.internal.GeneratedComponent
+-keep class **_HiltModules
+-keep class **_HiltComponents { *; }
+-keep class **_HiltComponents$*
+
+# Keep Inject constructors and fields (required for DI)
+-keepclasseswithmembernames class * {
     @javax.inject.Inject <init>(...);
 }
--keepclassmembers class * {
+-keepclasseswithmembernames class * {
     @javax.inject.Inject <fields>;
 }
 
-# Keep the Application class (fixed package name)
--keep class com.example.globaltranslation.GloabTranslationApplication { *; }
+# Keep the Application class
+-keep class com.example.globaltranslation.GlobalTranslationApplication { *; }
 
 # ML Kit keep rules
 -keep class com.google.mlkit.** { *; }
@@ -39,65 +49,46 @@
     native <methods>;
 }
 
-# Room keep rules
+# Room keep rules - minimal rules, let R8 optimize
 -keep class * extends androidx.room.RoomDatabase
 -keep @androidx.room.Entity class *
 -keep @androidx.room.Dao class *
 -dontwarn androidx.room.paging.**
 
-# Keep Room generated classes
--keep class com.example.globaltranslation.data.local.** { *; }
-
-# Kotlin coroutines keep rules
+# Kotlin coroutines - only keep what's needed for reflection
 -keepnames class kotlinx.coroutines.internal.MainDispatcherFactory {}
 -keepnames class kotlinx.coroutines.CoroutineExceptionHandler {}
--keepclassmembers class kotlinx.coroutines.** {
-    volatile <fields>;
-}
 
 # Kotlin serialization
 -keepattributes *Annotation*, InnerClasses
 -dontnote kotlinx.serialization.**
 
-# DataStore
--keep class androidx.datastore.*.** { *; }
+# DataStore - only keep protobuf classes
+-keepclassmembers class * extends androidx.datastore.preferences.protobuf.GeneratedMessageLite {
+    <fields>;
+}
 
-# Keep data classes used in StateFlow
--keep class com.example.globaltranslation.ui.**.* { *; }
--keep class com.example.globaltranslation.core.model.** { *; }
--keep class com.example.globaltranslation.core.provider.** { *; }
+# Keep UI state classes and core models (used in StateFlow)
+-keep,allowobfuscation class com.example.globaltranslation.ui.**.*UiState
+-keep,allowobfuscation class com.example.globaltranslation.core.model.**
+-keep,allowobfuscation class com.example.globaltranslation.core.provider.**
 
-# Keep data module classes
--keep class com.example.globaltranslation.data.** { *; }
--dontwarn com.example.globaltranslation.data.**
+# Data module - rely on consumer ProGuard rules from :data module
+# Only keep what's absolutely necessary for reflection/DI
+-keep,allowobfuscation class * extends androidx.room.RoomDatabase$Callback
 
-# Keep Hilt generated classes for data module
--keep class com.example.globaltranslation.data.di.** { *; }
+# Keep Parcelable implementations
+-keepclassmembers class * implements android.os.Parcelable {
+    public static final ** CREATOR;
+}
 
-# OkHttp and Conscrypt (used by Google Play Services for ML Kit downloads)
+# OkHttp and Conscrypt (used by Google Play Services)
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn javax.annotation.**
 -dontwarn org.conscrypt.**
--keep class okhttp3.** { *; }
--keep interface okhttp3.** { *; }
-
-# Suppress warnings about accessing hidden APIs (OkHttp SSL optimizations)
-# These are harmless - OkHttp gracefully falls back when reflection is denied
 -dontwarn com.android.org.conscrypt.**
--keep class com.android.org.conscrypt.** { *; }
 
-# If your project uses WebView with JS, uncomment the following
-# and specify the fully qualified class name to the JavaScript interface
-# class:
-#-keepclassmembers class fqcn.of.javascript.interface.for.webview {
-#   public *;
-#}
-
-# Uncomment this to preserve the line number information for
-# debugging stack traces.
-#-keepattributes SourceFile,LineNumberTable
-
-# If you keep the line number information, uncomment this to
-# hide the original source file name.
-#-renamesourcefileattribute SourceFile
+# Preserve line number information for debugging stack traces
+-keepattributes SourceFile,LineNumberTable
+-renamesourcefileattribute SourceFile

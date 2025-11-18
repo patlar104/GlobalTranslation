@@ -1,6 +1,7 @@
 # GlobalTranslation
 
-An Android translation app built with Jetpack Compose and ML Kit. **Multi-module clean architecture** with live conversation translation, camera translation, and language management capabilities.
+An Android translation app built with Jetpack Compose and ML Kit. **Multi-module clean architecture** with live
+conversation translation, camera translation, and language management capabilities.
 
 ## 🚀 Features
 
@@ -20,7 +21,7 @@ An Android translation app built with Jetpack Compose and ML Kit. **Multi-module
 **Development Phase**: ✅ **Core Features Complete**
 
 - ✅ Navigation structure with adaptive NavigationSuiteScaffold
-- ✅ Hilt dependency injection fully configured  
+- ✅ Hilt dependency injection fully configured
 - ✅ Stable build system with AGP 8.13.0
 - ✅ ML Kit translate integration with model management
 - ✅ All core services implemented (Translation, Speech Recognition, TTS)
@@ -48,12 +49,13 @@ An Android translation app built with Jetpack Compose and ML Kit. **Multi-module
 This app supports Android devices with **16KB memory pages** (ARM64):
 
 - **ML Kit libraries**: Latest versions with 16KB compatibility
-- **Room database**: 2.7+ with automatic page size handling  
+- **Room database**: 2.7+ with automatic page size handling
 - **Native libraries**: Verified for 16KB alignment
 - **Tested on**: Android 15+ ARM64 emulators with 16KB pages
 - **Compliance**: Ready for Google Play 16KB page size requirements
 
-**Data Preservation**: Existing user data remains intact - no migration required. Room 2.7+ automatically handles page size differences.
+**Data Preservation**: Existing user data remains intact - no migration required. Room 2.7+ automatically handles page
+size differences.
 
 ## 🔧 Build Requirements
 
@@ -64,7 +66,7 @@ This app supports Android devices with **16KB memory pages** (ARM64):
 - **Kotlin**: 2.2.20 (latest stable)
 - **KSP**: 2.2.20-2.0.2 (matching Kotlin version)
 - **Hilt**: 2.57.2
-- **JVM Target**: 21 (Java & Kotlin aligned - LTS version)
+- **JVM Target**: 17 (Java & Kotlin aligned - LTS version)
 
 ### Build Performance Optimization
 
@@ -75,10 +77,11 @@ This project uses optimized build settings for faster CI/CD execution:
 org.gradle.jvmargs=-Xmx4096m -Dfile.encoding=UTF-8 -XX:+UseParallelGC
 org.gradle.parallel=true              # Parallel module compilation
 org.gradle.caching=true               # Incremental build cache
-org.gradle.configureondemand=true     # On-demand configuration
+org.gradle.autoconfigured=true     # On-demand configuration
 ```
 
 **CI/CD Optimizations**:
+
 - Parallel builds across :core, :data, :app modules
 - Build cache enabled for incremental compilation
 - Job-level timeouts prevent runaway builds (30min max)
@@ -101,12 +104,12 @@ plugins {
 
 // JVM target aligned between Java and Kotlin
 compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
 }
 kotlin {
     compilerOptions {
-        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21)
+        jvmTarget.set(org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_17)
     }
 }
 
@@ -167,11 +170,13 @@ GlobalTranslation/
 ```
 
 ### Module Dependencies
+
 - `:app` depends on `:core` and `:data`
 - `:data` depends on `:core`
 - `:core` has no dependencies (pure Kotlin)
 
 ### Benefits of Multi-Module Architecture
+
 - **Testability**: Pure Kotlin :core module enables fast unit tests
 - **Separation of Concerns**: Clear boundaries between domain, data, and UI
 - **Reusability**: :core and :data can be shared with Wear OS or other platforms
@@ -194,19 +199,30 @@ GlobalTranslation/
 > **📁 All Documentation**: See [`docs/README.md`](docs/README.md) for complete documentation index
 
 ### For Developers
-- **Quick Reference**: See [`docs/ai-agents/QUICK-REFERENCE.md`](docs/ai-agents/QUICK-REFERENCE.md) - Essential patterns and commands
-- **Architecture Patterns**: See [`docs/ai-agents/copilot-instructions.md`](docs/ai-agents/copilot-instructions.md) - Detailed implementation guide
-- **Code Analysis Rules**: See [`docs/ai-agents/copilot-analysis-rules.instructions.md`](docs/ai-agents/copilot-analysis-rules.instructions.md) - Error prevention
-- **Project Plan**: See [`docs/planning/Project Plan.md`](docs/planning/Project%20Plan.md) - Complete implementation history
+
+- **Quick Reference**: See [`docs/ai-agents/QUICK-REFERENCE.md`](docs/ai-agents/QUICK-REFERENCE.md) - Essential patterns
+  and commands
+- **Architecture Patterns**: See [`docs/ai-agents/copilot-instructions.md`](docs/ai-agents/copilot-instructions.md) -
+  Detailed implementation guide
+- **Code Analysis Rules**: See [
+  `docs/ai-agents/copilot-analysis-rules.instructions.md`](docs/ai-agents/copilot-analysis-rules.instructions.md) -
+  Error prevention
+- **Project Plan**: See [`docs/planning/Project Plan.md`](docs/planning/Project%20Plan.md) - Complete implementation
+  history
 - **Testing Strategy**: Comprehensive ViewModels with StateFlow testing patterns
 - **Hilt Setup**: Complete dependency injection with services module
 
 ### For AI Assistants (Cursor, Copilot, etc.)
+
 - **Cursor Rules**: See `.cursorrules` in root - Immediate patterns and build config
 - **Copilot Instructions**: See `.github/copilot-instructions.md` - Primary configuration (GitHub standard location)
-- **Detailed Guide**: See [`docs/ai-agents/copilot-instructions.md`](docs/ai-agents/copilot-instructions.md) - Comprehensive guide
-- **Integration Guide**: See [`docs/ai-agents/AI-AGENT-INTEGRATION.md`](docs/ai-agents/AI-AGENT-INTEGRATION.md) - How all docs work together
-- **Analysis Rules**: See [`docs/ai-agents/copilot-analysis-rules.instructions.md`](docs/ai-agents/copilot-analysis-rules.instructions.md) - Debugging workflows
+- **Detailed Guide**: See [`docs/ai-agents/copilot-instructions.md`](docs/ai-agents/copilot-instructions.md) -
+  Comprehensive guide
+- **Integration Guide**: See [`docs/ai-agents/AI-AGENT-INTEGRATION.md`](docs/ai-agents/AI-AGENT-INTEGRATION.md) - How
+  all docs work together
+- **Analysis Rules**: See [
+  `docs/ai-agents/copilot-analysis-rules.instructions.md`](docs/ai-agents/copilot-analysis-rules.instructions.md) -
+  Debugging workflows
 
 ## ✅ **Completed Implementation (Verified)**
 
@@ -215,94 +231,95 @@ GlobalTranslation/
 The app uses a clean provider pattern with interfaces in :core and implementations in :data:
 
 - **TranslationProvider** (MlKitTranslationProvider) ✅
-  - ML Kit integration with model download and deletion
-  - Caches active translators for performance
-  - Handles model download with WiFi conditions
-  - Properly checks model download status using `RemoteModelManager`
-  - Auto-downloads models on first translation (WiFi required)
-  - Delete downloaded models to free storage space
-  
+    - ML Kit integration with model download and deletion
+    - Caches active translators for performance
+    - Handles model download with WiFi conditions
+    - Properly checks model download status using `RemoteModelManager`
+    - Auto-downloads models on first translation (WiFi required)
+    - Delete downloaded models to free storage space
+
 - **SpeechProvider** (AndroidSpeechProvider) ✅
-  - Android SpeechRecognizer with permission handling
-  - Flow-based API for reactive speech recognition
-  - Proper error handling and cleanup
-  
+    - Android SpeechRecognizer with permission handling
+    - Flow-based API for reactive speech recognition
+    - Proper error handling and cleanup
+
 - **TextToSpeechProvider** (AndroidTextToSpeechProvider) ✅
-  - TTS with language-specific initialization
-  - Flow-based speech events
-  - Lifecycle-aware cleanup
+    - TTS with language-specific initialization
+    - Flow-based speech events
+    - Lifecycle-aware cleanup
 
 - **TextRecognitionProvider** (MlKitTextRecognitionProvider) ✅
-  - ML Kit Text Recognition for OCR
-  - Processes images and extracts text blocks with bounding boxes
-  - Returns hierarchical DetectedText structure (blocks > lines)
-  - Proper resource cleanup
+    - ML Kit Text Recognition for OCR
+    - Processes images and extracts text blocks with bounding boxes
+    - Returns hierarchical DetectedText structure (blocks > lines)
+    - Proper resource cleanup
 
 - **CameraTranslationProvider** (MlKitCameraTranslationProvider) ✅
-  - Combined OCR + Translation pipeline
-  - Processes camera frames through recognition pipeline
-  - Translates detected text blocks in parallel (async + awaitAll)
-  - Returns TranslatedTextBlock with original + translated text
-  - Model availability checking before translation
+    - Combined OCR + Translation pipeline
+    - Processes camera frames through recognition pipeline
+    - Translates detected text blocks in parallel (async + awaitAll)
+    - Returns TranslatedTextBlock with original + translated text
+    - Model availability checking before translation
 
 **Architecture**: All ViewModels inject provider interfaces from :core, Hilt provides :data implementations
 
 ### UI Screens (All Implemented & Verified)
 
 - **ConversationScreen**: Live voice translation with Room persistence ✅
-  - Uses `ConversationViewModel` with providers from :data
-  - Real-time speech recognition feedback
-  - Auto-play translation support
-  - **Pull-to-refresh** to view saved conversation history from Room database
-  - **Saved history management** with delete functionality
-  - Conversation history persisted to Room database
-  
+    - Uses `ConversationViewModel` with providers from :data
+    - Real-time speech recognition feedback
+    - Auto-play translation support
+    - **Pull-to-refresh** to view saved conversation history from Room database
+    - **Saved history management** with delete functionality
+    - Conversation history persisted to Room database
+
 - **TextInputScreen**: Manual text translation with full features ✅
-  - Uses `TextInputViewModel` with providers from :data
-  - Translation history with timestamps
-  - **Copy to clipboard** and **copy to input** functionality
-  - Text-to-speech for both original and translated text
-  - Speak button integration matching conversation screen
-  - Clear history and clear input buttons
+    - Uses `TextInputViewModel` with providers from :data
+    - Translation history with timestamps
+    - **Copy to clipboard** and **copy to input** functionality
+    - Text-to-speech for both original and translated text
+    - Speak button integration matching conversation screen
+    - Clear history and clear input buttons
 
 - **CameraScreen**: Real-time camera translation with OCR ✅
-  - Uses `CameraViewModel` with CameraTranslationProvider from :data
-  - CameraX preview with lifecycle management
-  - Permission request UI with runtime handling
-  - Real-time text detection and translation with throttling
-  - Flash toggle and language selection controls
-  - Processing indicator and error handling
-  - Document-style translation display
-  
+    - Uses `CameraViewModel` with CameraTranslationProvider from :data
+    - CameraX preview with lifecycle management
+    - Permission request UI with runtime handling
+    - Real-time text detection and translation with throttling
+    - Flash toggle and language selection controls
+    - Processing indicator and error handling
+    - Document-style translation display
+
 - **LanguageScreen**: ML Kit model management ✅
-  - Uses `LanguageViewModel` with TranslationProvider from :data
-  - **Material 3 HorizontalCenteredHeroCarousel** showcasing popular language pairs
-  - **Real-time network status indicator** (WiFi/Cellular/Offline)
-  - **WiFi-only download toggle** in settings card
-  - Dynamic download status checking
-  - Download models for offline translation
-  - Delete models to free storage space
-  - Cancel in-progress downloads
-  - 20+ supported languages
+    - Uses `LanguageViewModel` with TranslationProvider from :data
+    - **Material 3 HorizontalCenteredHeroCarousel** showcasing popular language pairs
+    - **Real-time network status indicator** (WiFi/Cellular/Offline)
+    - **WiFi-only download toggle** in settings card
+    - Dynamic download status checking
+    - Download models for offline translation
+    - Delete models to free storage space
+    - Cancel in-progress downloads
+    - 20+ supported languages
 
 **Migration Complete**: All ViewModels now use :data providers instead of legacy :app services
 
 ### Architecture & Best Practices
 
 - **StateFlow Pattern**: All ViewModels follow immutable state exposure best practices
-  - Private `MutableStateFlow` for internal updates
-  - Public `StateFlow` with `.asStateFlow()` for external consumption
-  - Single source of truth maintained across all features
-  
+    - Private `MutableStateFlow` for internal updates
+    - Public `StateFlow` with `.asStateFlow()` for external consumption
+    - Single source of truth maintained across all features
+
 - **Testing Infrastructure**: Production-ready test framework with 100% ViewModel coverage
-  - **55 unit tests** across 4 ViewModels (CameraViewModel: 17, ConversationViewModel: 30, TextInputViewModel: 5, LanguageViewModel: 3)
-  - Hilt-based dependency injection for tests
-  - Fake providers prevent flaky tests (no real DataStore/network dependencies)
-  - All tests reset state in `@Before` setup for isolation
-  - Material3 semantics handled correctly (useUnmergedTree patterns)
-  - Comprehensive error handling coverage (translation failures, speech errors, TTS errors)
-  - Async operations tested with `runTest` and `advanceUntilIdle()`
-  
+    - **55 unit tests** across 4 ViewModels (CameraViewModel: 17, ConversationViewModel: 30, TextInputViewModel: 5,
+      LanguageViewModel: 3)
+    - Hilt-based dependency injection for tests
+    - Fake providers prevent flaky tests (no real DataStore/network dependencies)
+    - All tests reset state in `@Before` setup for isolation
+    - Material3 semantics handled correctly (useUnmergedTree patterns)
+    - Comprehensive error handling coverage (translation failures, speech errors, TTS errors)
+    - Async operations tested with `runTest` and `advanceUntilIdle()`
+
 - **Reusable Components**: LanguagePicker dialog and button variants
 - **Runtime Permissions**: Comprehensive RECORD_AUDIO and CAMERA permission handling
 - **Modern APIs**: Material3 throughout with no deprecated API usage
@@ -313,6 +330,7 @@ The app uses a clean provider pattern with interfaces in :core and implementatio
 The app is feature-complete and follows Android best practices:
 
 ✅ **Implemented Features - Production-Ready**
+
 - Live conversation translation with Room persistence
 - Manual text input translation with history, TTS, and clipboard
 - Camera translation with real-time OCR (CameraX + ML Kit)
@@ -324,6 +342,7 @@ The app is feature-complete and follows Android best practices:
 - Comprehensive error handling and permissions
 
 ✅ **Architecture Quality**
+
 - Multi-module clean architecture with provider pattern
 - All ViewModels migrated to :data providers (Oct 10, 2025)
 - StateFlow best practices in all ViewModels
@@ -336,6 +355,7 @@ The app is feature-complete and follows Android best practices:
 - Optimized CI/CD pipeline with parallel builds and caching
 
 ✅ **Verified Implementation**
+
 - All 4 ViewModels using provider pattern from :data
 - Navigation uses adaptive NavigationSuiteScaffold
 - No deprecated API usage
@@ -344,7 +364,9 @@ The app is feature-complete and follows Android best practices:
 
 ### Future Enhancement Opportunities
 
-The planned core features are implemented. See [`docs/planning/FEATURE_PLAN.md`](docs/planning/FEATURE_PLAN.md) for potential future enhancements (not currently in active development):
+The planned core features are implemented. See [`docs/planning/FEATURE_PLAN.md`](docs/planning/FEATURE_PLAN.md) for
+potential future enhancements (not currently in active development):
+
 - Face-to-Face Mode (split-screen conversation)
 - AI Practice with Gemini (conversational learning)
 - Image Translation (upload/translate images)
@@ -356,18 +378,21 @@ The planned core features are implemented. See [`docs/planning/FEATURE_PLAN.md`]
 ### Recent Bug Fixes
 
 **Model Download Status Accuracy** (Fixed)
+
 - **Issue**: Languages screen showed incorrect download status
 - **Cause**: Checking models by attempting translation (which auto-downloaded)
 - **Fix**: Now uses `RemoteModelManager.getInstance()` to check actual status
 - **Impact**: Accurate download status, better error messages, clear WiFi guidance
 
 **Text Input Copy/Speak Functionality** (Fixed)
+
 - **Issue**: Copy and speak buttons were TODO placeholders, not functional
 - **Cause**: TextToSpeechService not injected, clipboard not integrated
 - **Fix**: Added TTS injection, clipboard manager, and proper callbacks
 - **Impact**: Full feature parity with conversation screen, improved UX
 
 **Model Deletion Feature** (Implemented)
+
 - **Issue**: Remove button was a TODO placeholder
 - **Cause**: No deleteModel() method in TranslationService
 - **Fix**: Added deletion support using RemoteModelManager
@@ -378,18 +403,22 @@ The planned core features are implemented. See [`docs/planning/FEATURE_PLAN.md`]
 ### Common Build Issues
 
 #### KSP Plugin Not Found
+
 **Error**: `Plugin [id: 'com.google.devtools.ksp', version: '2.2.20-1.0.20'] was not found`
 
 **Solution**: KSP changed their versioning scheme from `1.0.x` to `2.0.x`. For Kotlin 2.2.20, use KSP `2.2.20-2.0.2`:
+
 ```toml
 # In gradle/libs.versions.toml
 ksp = "2.2.20-2.0.2"  # Not 1.0.20!
 ```
 
 #### JVM Target Mismatch
+
 **Error**: `Inconsistent JVM-target compatibility detected`
 
 **Solution**: Ensure both Java and Kotlin target the same JVM version:
+
 ```kotlin
 // In app/build.gradle.kts
 compileOptions {
@@ -404,9 +433,11 @@ kotlin {
 ```
 
 #### Application Class Not Found at Runtime
+
 **Error**: `ClassNotFoundException: com.example.globaltranslation.GloabTranslationApplication`
 
 **Solution**: Ensure the `kotlin.android` plugin is present:
+
 ```kotlin
 // In app/build.gradle.kts
 plugins {
@@ -419,6 +450,7 @@ plugins {
 ```
 
 Then do a clean rebuild:
+
 ```bash
 .\gradlew clean
 .\gradlew :app:assembleDebug
@@ -431,18 +463,26 @@ This project includes comprehensive documentation for both developers and AI cod
 > **📚 Documentation Hub**: All documentation is organized in [`docs/`](docs/README.md) with clear categories
 
 ### Developer Documentation
-- **Quick Reference Card**: [`docs/ai-agents/QUICK-REFERENCE.md`](docs/ai-agents/QUICK-REFERENCE.md) - Print-friendly patterns cheat sheet
-- **Project Plan**: [`docs/planning/Project Plan.md`](docs/planning/Project%20Plan.md) - Implementation status and history
+
+- **Quick Reference Card**: [`docs/ai-agents/QUICK-REFERENCE.md`](docs/ai-agents/QUICK-REFERENCE.md) - Print-friendly
+  patterns cheat sheet
+- **Project Plan**: [`docs/planning/Project Plan.md`](docs/planning/Project%20Plan.md) - Implementation status and
+  history
 - **Feature Roadmap**: [`docs/planning/FEATURE_PLAN.md`](docs/planning/FEATURE_PLAN.md) - Future enhancement options
 - **Historical Archive**: [`docs/archive/`](docs/archive/) - Implementation summaries and bug fix reports
 - **This README**: Build setup, troubleshooting, and getting started
 
 ### AI Assistant Documentation
+
 - **Cursor Rules**: `.cursorrules` - Quick patterns and critical build config
 - **Copilot Instructions**: `.github/copilot-instructions.md` - Primary configuration (GitHub standard location)
-- **Detailed Guide**: [`docs/ai-agents/copilot-instructions.md`](docs/ai-agents/copilot-instructions.md) - Comprehensive architecture guide
-- **Analysis Rules**: [`docs/ai-agents/copilot-analysis-rules.instructions.md`](docs/ai-agents/copilot-analysis-rules.instructions.md) - Error prevention and debugging
-- **Integration Guide**: [`docs/ai-agents/AI-AGENT-INTEGRATION.md`](docs/ai-agents/AI-AGENT-INTEGRATION.md) - How all instruction files work together
+- **Detailed Guide**: [`docs/ai-agents/copilot-instructions.md`](docs/ai-agents/copilot-instructions.md) - Comprehensive
+  architecture guide
+- **Analysis Rules**: [
+  `docs/ai-agents/copilot-analysis-rules.instructions.md`](docs/ai-agents/copilot-analysis-rules.instructions.md) -
+  Error prevention and debugging
+- **Integration Guide**: [`docs/ai-agents/AI-AGENT-INTEGRATION.md`](docs/ai-agents/AI-AGENT-INTEGRATION.md) - How all
+  instruction files work together
 
 All documentation is kept synchronized and verified against the actual codebase.
 

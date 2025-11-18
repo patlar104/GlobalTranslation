@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lint>
+    <!-- Enable high-priority checks for better code quality and Kotlin interoperability -->
+
+    <!-- Ensure targetSdk is up-to-date -->
+    <issue id="OldTargetApi" severity="warning" />
+
+    <!-- Catch incomplete code before release (enabled only for release builds) -->
+    <issue id="StopShip" severity="error" />
+
+    <!-- Optimize logging for release builds -->
+    <issue id="LogConditional" severity="warning" />
+
+    <!-- Improve Kotlin interoperability with nullness annotations -->
+    <issue id="UnknownNullness" severity="warning">
+        <option name="ignore-deprecated" value="true" />
+    </issue>
+
+    <!-- Better Kotlin interop - avoid using Kotlin hard keywords -->
+    <issue id="NoHardKeywords" severity="warning" />
+
+    <!-- Reduce method count by avoiding synthetic accessors -->
+    <issue id="SyntheticAccessor" severity="informational" />
+
+    <!-- Follow Kotlin property access conventions -->
+    <issue id="KotlinPropertyAccess" severity="warning" />
+
+    <!-- Avoid performance issues with expensive assertions -->
+    <issue id="ExpensiveAssertion" severity="warning" />
+
+    <!-- Medium priority checks -->
+
+    <!-- Use correct AppCompat methods -->
+    <issue id="AppCompatMethod" severity="warning" />
+
+    <!-- Improve UX for data display with selectable text -->
+    <issue id="SelectableText" severity="informational" />
+
+    <!-- Reduce app size by removing duplicate strings -->
+    <issue id="DuplicateStrings" severity="informational" />
+
+    <!-- Catch layout issues with negative margins -->
+    <issue id="NegativeMargin" severity="warning" />
+
+    <!-- Ensure thread safety -->
+    <issue id="ThreadConstraint" severity="error" />
+
+    <!-- Better lambda parameter naming for Kotlin -->
+    <issue id="LambdaLast" severity="warning" />
+
+    <!-- Detect unregistered activities, services, and providers -->
+    <issue id="Registered" severity="warning" />
+
+    <!-- Typography improvements -->
+    <issue id="TypographyQuotes" severity="informational" />
+
+    <!-- WebP conversion for better image compression -->
+    <issue id="ConvertToWebp" severity="informational" />
+
+    <!-- Composable naming conventions -->
+    <issue id="ComposableLambdaParameterNaming" severity="warning" />
+    <issue id="ComposableLambdaParameterPosition" severity="warning" />
+
+    <!-- Layout requirements -->
+    <issue id="RequiredSize" severity="error" />
+
+    <!-- ChromeOS and large screen support -->
+    <issue id="UnsupportedChromeOsHardware" severity="warning" />
+
+    <!-- No-op code detection -->
+    <issue id="NoOp" severity="warning">
+        <option name="pure-getters" value="true" />
+    </issue>
+
+    <!-- Keep DisabledChecks at low priority or ignored -->
+
+    <!-- These can be noisy, so keeping them informational or ignored -->
+    <issue id="DalvikOverride" severity="ignore" />
+    <issue id="DefaultEncoding" severity="ignore" />
+    <issue id="IconExpectedSize" severity="informational" />
+    <issue id="InvalidPackage" severity="ignore" />
+    <issue id="BackButton" severity="ignore" />
+
+    <!-- Keep UnusedIds informational - useful during development -->
+    <issue id="UnusedIds" severity="informational" />
+
+    <!-- Easter eggs and hidden code -->
+    <issue id="EasterEgg" severity="warning" />
+
+    <!-- Permission naming conventions -->
+    <issue id="PermissionNamingConvention" severity="warning" />
+
+    <!-- String format optimization -->
+    <issue id="StringFormatTrivial" severity="informational" />
+
+    <!-- Interprocedural thread checking (can be slow) -->
+    <issue id="WrongThreadInterprocedural" severity="informational" />
+
+    <!-- Privacy Sandbox (disabled by default, enable if needed) -->
+    <issue id="PrivacySandboxBlockedCall" severity="ignore" />
+
+    <!-- Mangle CRLF detection -->
+    <issue id="MangledCRLF" severity="warning" />
+
+    <!-- Lint implementation checks -->
+    <issue id="LintDocExample" severity="ignore" />
+    <issue id="LintImplPsiEquals" severity="ignore" />
+    <issue id="LintImplUnexpectedDomain" severity="ignore" />
+
+    <!-- Vulnerable Cordova (not applicable if not using Cordova) -->
+    <issue id="VulnerableCordovaVersion" severity="ignore" />
+
+    <!-- App Links verification -->
+    <issue id="AppLinksAutoVerify" severity="informational" />
+
+    <!-- Actions XML validation -->
+    <issue id="ValidActionsXml" severity="warning" />
+
+    <!-- Kotlin frontend (FE10) deprecation -->
+    <issue id="KotlincFE10" severity="informational" />
+
+    <!-- Min SDK optimization -->
+    <issue id="MinSdkTooLow" severity="informational" />
+
+    <!-- Member extension conflicts -->
+    <issue id="MemberExtensionConflict" severity="warning" />
+</lint>

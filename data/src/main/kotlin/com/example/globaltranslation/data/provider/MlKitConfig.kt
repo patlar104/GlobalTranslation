@@ -84,4 +84,10 @@ object MlKitConfig {
      * Large models may take time to download on slow networks.
      */
     const val MODEL_DOWNLOAD_TIMEOUT_MS = 300_000L // 5 minutes
+
+    /**
+     * Default maximum size for LRU caches.
+     * Balances memory usage with caching benefits.
+     */
+    const val DEFAULT_LRU_CACHE_SIZE = 50
 }

@@ -1,5 +1,6 @@
 package com.example.globaltranslation.data.util
 
+import com.example.globaltranslation.data.provider.MlKitConfig
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import java.util.concurrent.ConcurrentHashMap
@@ -8,17 +9,17 @@ import java.util.concurrent.ConcurrentHashMap
  * Memory-efficient cache with automatic eviction.
  * Implements LRU (Least Recently Used) eviction policy to prevent unbounded growth.
  * Thread-safe and optimized for concurrent access.
- * 
+ *
  * Battery benefits:
  * - Reduces redundant network/disk operations
  * - Configurable size limits to prevent memory pressure
  * - Efficient concurrent access without blocking
- * 
+ *
  * @param T Type of cached values
- * @param maxSize Maximum number of entries before eviction (default: 50)
+ * @param maxSize Maximum number of entries before eviction (default from MlKitConfig)
  */
 class LruCache<K : Any, V : Any>(
-    private val maxSize: Int = 50
+    private val maxSize: Int = MlKitConfig.DEFAULT_LRU_CACHE_SIZE
 ) {
     private val cache = ConcurrentHashMap<K, CacheEntry<V>>()
     private val mutex = Mutex()

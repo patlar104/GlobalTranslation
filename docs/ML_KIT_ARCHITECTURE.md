@@ -6,7 +6,7 @@ This document provides comprehensive documentation for the ML Kit provider imple
 
 ## Architecture Diagram
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────┐
 │                     Application Layer                        │
 │                      (ViewModels)                           │
@@ -56,10 +56,79 @@ This document provides comprehensive documentation for the ML Kit provider imple
 **Purpose**: Handles text translation using ML Kit's on-device translation models.
 
 **Key Responsibilities**:
+
 - Manage translator instances with efficient caching
 - Download and manage translation models
 - Handle model availability checks
 - Coordinate translation operations
+
+**Critical Method Distinction: `areModelsDownloaded()` vs `translate()`**:
+
+The provider implements two distinct approaches to model management:
+
+- **`areModelsDownloaded(from: String, to: String): Boolean`**
+    - Purpose: Check model availability WITHOUT triggering downloads
+    - Behavior: Queries `RemoteModelManager` to check if models exist locally
+    - Use case: UI status checks, displaying download buttons, checking readiness
+    - Network: No network activity, purely local check
+
+    ```kotlin
+    // Check if user needs to download models before translating
+    val modelsReady = translationProvider.areModelsDownloaded("en", "es")
+    if (!modelsReady) {
+            // Show download button or prompt user
+    }
+    ```
+
+- **`translate(text: String, from: String, to: String): Result<String>`**
+    - Purpose: Perform translation; auto-download models if needed
+    - Behavior: Automatically triggers model download on first use (WiFi required)
+    - Use case: Actual translation operations when models should be available
+    - Network: May initiate large downloads (50–100MB per language pair) on WiFi
+
+    ```kotlin
+    // Will download models automatically if missing (on WiFi)
+    val result = translationProvider.translate("Hello", "en", "es")
+    ```
+
+**Why This Matters**:
+
+- **Prevents Unwanted Downloads**: Checking availability shouldn't trigger large downloads
+- **User Control**: UI can show download status and let users choose when to download
+- **Network Awareness**: Auto-download only happens on WiFi to avoid cellular data charges
+- **Clear Intent**: Separation makes code intentions explicit (checking vs. downloading)
+
+**Best Practice**:
+
+```kotlin
+// ViewModel pattern for checking and downloading
+fun checkAndDownloadIfNeeded(from: String, to: String) {
+    viewModelScope.launch {
+        if (!translationProvider.areModelsDownloaded(from, to)) {
+            _uiState.value = _uiState.value.copy(
+                showDownloadPrompt = true,
+                modelsReady = false
+            )
+        } else {
+            _uiState.value = _uiState.value.copy(modelsReady = true)
+        }
+    }
+}
+
+fun downloadModels(from: String, to: String) {
+    viewModelScope.launch {
+        translationProvider.downloadModels(from, to)
+            .onSuccess { 
+                _uiState.value = _uiState.value.copy(modelsReady = true)
+            }
+            .onFailure { error ->
+                _uiState.value = _uiState.value.copy(
+                    error = "Download failed: ${error.message}. WiFi required."
+                )
+            }
+    }
+}
+```
 
 **Implementation Details**:
 
@@ -71,22 +140,26 @@ class MlKitTranslationProvider @Inject constructor(
 ```
 
 **Resource Management**:
+
 - **Translator Caching**: Uses `ConcurrentHashMap<String, Translator>` to cache translators
 - **Cache Key Format**: `"from-to"` (e.g., `"en-es"`)
 - **Model State**: Tracks which models are ready in memory with `ConcurrentHashMap.newKeySet<String>()`
 - **Lazy Initialization**: Model manager is created only when first needed
 
 **Thread Safety**:
+
 - All operations are thread-safe using `ConcurrentHashMap` and `Mutex`
 - Download operations use double-checked locking to prevent duplicate downloads
 - Cleanup method safely closes all translators
 
 **Error Handling**:
+
 - Returns `Result<T>` for all operations
 - Validates input before processing
 - Catches and wraps exceptions with meaningful messages
 
 **Performance Optimizations**:
+
 - Lazy model manager initialization
 - Efficient translator caching (prevents recreation)
 - Mutex synchronization for downloads (prevents duplicates)
@@ -99,12 +172,14 @@ class MlKitTranslationProvider @Inject constructor(
 **Purpose**: Performs optical character recognition (OCR) on images using ML Kit's text recognition.
 
 **Key Responsibilities**:
+
 - Recognize text in images across multiple scripts
 - Select appropriate recognizer based on language
 - Convert ML Kit results to domain models
 - Cache recognizers for performance
 
 **Supported Scripts**:
+
 - **Latin** (Default): English and most European languages
 - **Chinese**: Simplified and Traditional Chinese
 - **Japanese**: Hiragana, Katakana, Kanji
@@ -119,6 +194,7 @@ class MlKitTextRecognitionProvider @Inject constructor() : TextRecognitionProvid
 ```
 
 **Script Selection Logic**:
+
 ```kotlin
 when (languageCode) {
     TranslateLanguage.CHINESE -> ChineseTextRecognizerOptions
@@ -130,11 +206,13 @@ when (languageCode) {
 ```
 
 **Resource Management**:
+
 - **Recognizer Caching**: One recognizer per script
 - **Lazy Creation**: Recognizers created on first use
 - **Cleanup**: All recognizers properly closed
 
 **Performance Optimizations**:
+
 - Recognizers cached to avoid recreation
 - Lazy initialization per script
 - Efficient script detection
@@ -147,6 +225,7 @@ when (languageCode) {
 **Purpose**: Combines OCR and translation for real-time camera-based translation.
 
 **Key Responsibilities**:
+
 - Process camera frames for text detection
 - Group detected text blocks intelligently
 - Translate multiple text blocks in parallel
@@ -154,7 +233,7 @@ when (languageCode) {
 
 **Processing Pipeline**:
 
-```
+```text
 Camera Frame
     ↓
 InputImage
@@ -179,16 +258,19 @@ class MlKitCameraTranslationProvider @Inject constructor(
 ```
 
 **Parallel Processing**:
+
 - Uses `coroutineScope` to ensure proper cancellation
 - `async/awaitAll` for concurrent translation of text blocks
 - Bounded parallelism (configuration can limit concurrent operations)
 
 **Error Handling**:
+
 - Early exit on empty results (performance optimization)
 - Fallback to original text if translation fails
 - Wrapped exceptions with context
 
 **Performance Optimizations**:
+
 - Early exit on empty text detection
 - Parallel translation of text blocks
 - Efficient text block grouping
@@ -201,6 +283,7 @@ class MlKitCameraTranslationProvider @Inject constructor(
 Centralized configuration object for all ML Kit providers.
 
 **Key Parameters**:
+
 - `DEFAULT_OPERATION_TIMEOUT_MS`: 30 seconds
 - `MAX_RETRY_ATTEMPTS`: 3 attempts
 - `MAX_CACHED_TRANSLATORS`: 10 translators
@@ -209,6 +292,7 @@ Centralized configuration object for all ML Kit providers.
 - `MAX_PARALLEL_TRANSLATIONS`: 20 concurrent operations
 
 **Usage**:
+
 ```kotlin
 val timeout = MlKitConfig.DEFAULT_OPERATION_TIMEOUT_MS
 val maxRetries = MlKitConfig.MAX_RETRY_ATTEMPTS
@@ -221,6 +305,7 @@ val maxRetries = MlKitConfig.MAX_RETRY_ATTEMPTS
 Standardized error handling for ML Kit operations.
 
 **Error Classification**:
+
 - `NETWORK`: Network-related errors
 - `MODEL_UNAVAILABLE`: Model not downloaded
 - `INVALID_INPUT`: Input validation errors
@@ -228,11 +313,13 @@ Standardized error handling for ML Kit operations.
 - `UNKNOWN`: Unexpected errors
 
 **Retry Logic**:
+
 - Automatic retry for transient failures (network, model unavailable)
 - Exponential backoff: `delay * (2 ^ attempt)`
 - No retry for permanent failures (invalid input, resource exhausted)
 
 **Usage**:
+
 ```kotlin
 val result = MlKitErrorHandler.withMlKitRetry {
     performMlKitOperation()
@@ -240,6 +327,7 @@ val result = MlKitErrorHandler.withMlKitRetry {
 ```
 
 **Input Validation**:
+
 ```kotlin
 MlKitErrorHandler.validateTextInput(text, "Translation")
     .onFailure { return it }
@@ -252,11 +340,13 @@ MlKitErrorHandler.validateTextInput(text, "Translation")
 ### 1. Resource Management
 
 **DO**:
+
 - Always call `cleanup()` when provider is no longer needed
 - Use dependency injection for provider instances
 - Rely on cached instances (singleton scope)
 
 **DON'T**:
+
 - Create multiple provider instances
 - Forget to clean up resources
 - Keep references after cleanup
@@ -264,11 +354,13 @@ MlKitErrorHandler.validateTextInput(text, "Translation")
 ### 2. Error Handling
 
 **DO**:
+
 - Use `MlKitErrorHandler.withMlKitRetry()` for operations
 - Validate input before processing
 - Provide user-friendly error messages
 
 **DON'T**:
+
 - Ignore errors silently
 - Use raw try-catch without classification
 - Retry non-retryable errors
@@ -276,11 +368,13 @@ MlKitErrorHandler.validateTextInput(text, "Translation")
 ### 3. Performance
 
 **DO**:
+
 - Use configuration constants from `MlKitConfig`
 - Process operations in parallel when possible
 - Exit early on invalid or empty input
 
 **DON'T**:
+
 - Hard-code configuration values
 - Process sequentially when parallel is possible
 - Continue processing after detecting errors
@@ -288,11 +382,13 @@ MlKitErrorHandler.validateTextInput(text, "Translation")
 ### 4. Thread Safety
 
 **DO**:
+
 - Trust the thread-safe implementations
 - Use coroutines for async operations
 - Leverage built-in synchronization
 
 **DON'T**:
+
 - Add additional synchronization unnecessarily
 - Use threads instead of coroutines
 - Access internal state directly
@@ -304,6 +400,7 @@ MlKitErrorHandler.validateTextInput(text, "Translation")
 ### Unit Tests
 
 Test individual provider methods with mocked dependencies:
+
 - Input validation
 - Error handling
 - Resource cleanup
@@ -312,12 +409,14 @@ Test individual provider methods with mocked dependencies:
 ### Integration Tests
 
 Test with real ML Kit SDK:
+
 - Model download/availability
 - Translation accuracy
 - Text recognition accuracy
 - Performance benchmarks
 
-### Example Test:
+### Example Test
+
 ```kotlin
 @Test
 fun translate_with_empty_text_returns_failure() = runTest {
@@ -333,18 +432,21 @@ fun translate_with_empty_text_returns_failure() = runTest {
 ## Performance Characteristics
 
 ### MlKitTranslationProvider
+
 - **First Translation**: 2-5 seconds (model download + initialization)
 - **Subsequent Translations**: 100-500ms (cached translator)
 - **Memory**: ~50MB per active translator
 - **Cache Size**: Up to 10 translators (configurable)
 
 ### MlKitTextRecognitionProvider
+
 - **First Recognition**: 1-3 seconds (model initialization)
 - **Subsequent Recognition**: 200-800ms (cached recognizer)
 - **Memory**: ~30MB per recognizer
 - **Cache Size**: Up to 5 recognizers (one per script)
 
 ### MlKitCameraTranslationProvider
+
 - **Full Pipeline**: 1-5 seconds (depends on text complexity)
 - **OCR Phase**: 200-800ms
 - **Translation Phase**: 100-500ms per text block (parallel)
@@ -357,18 +459,22 @@ fun translate_with_empty_text_returns_failure() = runTest {
 ### Common Issues
 
 **Issue**: Translation fails with "Model not available"
+
 - **Cause**: Translation model not downloaded
 - **Solution**: Call `downloadModels()` or ensure WiFi connectivity
 
 **Issue**: Text recognition returns empty results
+
 - **Cause**: Wrong script/language selected or poor image quality
 - **Solution**: Verify language code, improve lighting/focus
 
 **Issue**: High memory usage
+
 - **Cause**: Too many cached translators/recognizers
 - **Solution**: Adjust cache limits in `MlKitConfig`
 
 **Issue**: Slow performance
+
 - **Cause**: Sequential processing or first-time model loading
 - **Solution**: Use parallel processing, pre-load models
 

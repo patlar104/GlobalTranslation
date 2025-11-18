@@ -23,19 +23,19 @@ import javax.inject.Inject
 class CameraViewModel @Inject constructor(
     private val cameraTranslationProvider: CameraTranslationProvider
 ) : ViewModel() {
-    
+
     private val _uiState = MutableStateFlow(CameraUiState())
     val uiState: StateFlow<CameraUiState> = _uiState.asStateFlow()
-    
+
     // No more continuous processing - only on-demand capture
-    
+
     /**
      * Sets the source language for translation.
      * Ensures at least one language is English (ML Kit requirement).
      */
     fun setSourceLanguage(languageCode: String) {
         val currentTarget = _uiState.value.targetLanguageCode
-        
+
         // If setting source to non-English and target is also non-English, reset target to English
         if (languageCode != TranslateLanguage.ENGLISH && currentTarget != TranslateLanguage.ENGLISH) {
             _uiState.value = _uiState.value.copy(
@@ -46,14 +46,14 @@ class CameraViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(sourceLanguageCode = languageCode)
         }
     }
-    
+
     /**
      * Sets the target language for translation.
      * Ensures at least one language is English (ML Kit requirement).
      */
     fun setTargetLanguage(languageCode: String) {
         val currentSource = _uiState.value.sourceLanguageCode
-        
+
         // If setting target to non-English and source is also non-English, reset source to English
         if (languageCode != TranslateLanguage.ENGLISH && currentSource != TranslateLanguage.ENGLISH) {
             _uiState.value = _uiState.value.copy(
@@ -64,7 +64,7 @@ class CameraViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(targetLanguageCode = languageCode)
         }
     }
-    
+
     /**
      * Swaps source and target languages.
      */
@@ -75,7 +75,7 @@ class CameraViewModel @Inject constructor(
             targetLanguageCode = currentState.sourceLanguageCode
         )
     }
-    
+
     /**
      * Toggles flash on/off.
      */
@@ -84,7 +84,7 @@ class CameraViewModel @Inject constructor(
             isFlashOn = !_uiState.value.isFlashOn
         )
     }
-    
+
     /**
      * Processes a captured image for text recognition and translation.
      * This is called with an actual captured photo (Google Lens style).
@@ -97,14 +97,14 @@ class CameraViewModel @Inject constructor(
                     isFrozen = true,
                     error = null
                 )
-                
+
                 // Process the captured image using provider
                 val result = cameraTranslationProvider.processImage(
                     imageData = inputImage,
                     sourceLanguage = _uiState.value.sourceLanguageCode,
                     targetLanguage = _uiState.value.targetLanguageCode
                 )
-                
+
                 result.fold(
                     onSuccess = { translatedBlocks ->
                         val detectedBlocks = translatedBlocks.map { block ->
@@ -119,7 +119,7 @@ class CameraViewModel @Inject constructor(
                                 )
                             )
                         }
-                        
+
                         if (detectedBlocks.isNotEmpty()) {
                             _uiState.value = _uiState.value.copy(
                                 detectedTextBlocks = detectedBlocks,
@@ -148,14 +148,14 @@ class CameraViewModel @Inject constructor(
             }
         }
     }
-    
+
     /**
      * Clears the current error message.
      */
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
-    
+
     /**
      * Clears detected text blocks (results) and resumes camera.
      */
@@ -167,7 +167,7 @@ class CameraViewModel @Inject constructor(
             error = null
         )
     }
-    
+
     /**
      * Resets the camera (unfreezes and clears translations).
      */
@@ -198,8 +198,8 @@ data class CameraUiState(
      * ML Kit only supports translation pairs with English.
      */
     fun isValidLanguagePair(): Boolean {
-        return sourceLanguageCode == "en" ||  // TranslateLanguage.ENGLISH 
-               targetLanguageCode == "en"
+        return sourceLanguageCode == "en" ||  // TranslateLanguage.ENGLISH
+                targetLanguageCode == "en"
     }
 }
 

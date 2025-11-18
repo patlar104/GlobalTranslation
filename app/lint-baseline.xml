@@ -1,0 +1,1071 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<issues format="6" by="lint 8.13.1" type="baseline" client="gradle" dependencies="true" name="AGP (8.13.1)" variant="all" version="8.13.1">
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `StopShip` was configured with severity `error` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;StopShip&quot; severity=&quot;error&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="9"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `StopShip` was configured with severity `error` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;StopShip&quot; severity=&quot;error&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="9"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `StopShip` was configured with severity `error` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;StopShip&quot; severity=&quot;error&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="9"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `LogConditional` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;LogConditional&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="12"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `LogConditional` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;LogConditional&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="12"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `LogConditional` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;LogConditional&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="12"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `UnknownNullness` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;UnknownNullness&quot; severity=&quot;warning&quot;>"
+        errorLine2="    ^">
+        <location
+            file="lint.xml"
+            line="15"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `UnknownNullness` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;UnknownNullness&quot; severity=&quot;warning&quot;>"
+        errorLine2="    ^">
+        <location
+            file="lint.xml"
+            line="15"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `UnknownNullness` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;UnknownNullness&quot; severity=&quot;warning&quot;>"
+        errorLine2="    ^">
+        <location
+            file="lint.xml"
+            line="15"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `NoHardKeywords` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;NoHardKeywords&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="20"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `NoHardKeywords` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;NoHardKeywords&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="20"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `NoHardKeywords` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;NoHardKeywords&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="20"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `SyntheticAccessor` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;SyntheticAccessor&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="23"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `SyntheticAccessor` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;SyntheticAccessor&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="23"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `SyntheticAccessor` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;SyntheticAccessor&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="23"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `KotlinPropertyAccess` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;KotlinPropertyAccess&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="26"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `KotlinPropertyAccess` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;KotlinPropertyAccess&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="26"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `KotlinPropertyAccess` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;KotlinPropertyAccess&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="26"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ExpensiveAssertion` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ExpensiveAssertion&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="29"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ExpensiveAssertion` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ExpensiveAssertion&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="29"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ExpensiveAssertion` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ExpensiveAssertion&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="29"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `AppCompatMethod` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;AppCompatMethod&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="34"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `AppCompatMethod` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;AppCompatMethod&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="34"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `AppCompatMethod` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;AppCompatMethod&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="34"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `SelectableText` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;SelectableText&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="37"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `SelectableText` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;SelectableText&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="37"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `SelectableText` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;SelectableText&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="37"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `DuplicateStrings` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;DuplicateStrings&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="40"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `DuplicateStrings` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;DuplicateStrings&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="40"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `DuplicateStrings` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;DuplicateStrings&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="40"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `NegativeMargin` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;NegativeMargin&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="43"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `NegativeMargin` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;NegativeMargin&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="43"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `NegativeMargin` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;NegativeMargin&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="43"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ThreadConstraint` was configured with severity `error` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ThreadConstraint&quot; severity=&quot;error&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="46"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ThreadConstraint` was configured with severity `error` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ThreadConstraint&quot; severity=&quot;error&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="46"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ThreadConstraint` was configured with severity `error` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ThreadConstraint&quot; severity=&quot;error&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="46"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `LambdaLast` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;LambdaLast&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="49"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `LambdaLast` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;LambdaLast&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="49"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `LambdaLast` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;LambdaLast&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="49"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `Registered` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;Registered&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="52"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `Registered` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;Registered&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="52"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `Registered` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;Registered&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="52"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `TypographyQuotes` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;TypographyQuotes&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="55"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `TypographyQuotes` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;TypographyQuotes&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="55"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `TypographyQuotes` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;TypographyQuotes&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="55"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ConvertToWebp` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ConvertToWebp&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="58"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ConvertToWebp` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ConvertToWebp&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="58"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ConvertToWebp` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ConvertToWebp&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="58"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `RequiredSize` was configured with severity `error` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;RequiredSize&quot; severity=&quot;error&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="65"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `RequiredSize` was configured with severity `error` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;RequiredSize&quot; severity=&quot;error&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="65"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `RequiredSize` was configured with severity `error` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;RequiredSize&quot; severity=&quot;error&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="65"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `UnsupportedChromeOsHardware` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;UnsupportedChromeOsHardware&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="68"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `UnsupportedChromeOsHardware` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;UnsupportedChromeOsHardware&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="68"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `UnsupportedChromeOsHardware` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;UnsupportedChromeOsHardware&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="68"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `NoOp` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;NoOp&quot; severity=&quot;warning&quot;>"
+        errorLine2="    ^">
+        <location
+            file="lint.xml"
+            line="71"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `NoOp` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;NoOp&quot; severity=&quot;warning&quot;>"
+        errorLine2="    ^">
+        <location
+            file="lint.xml"
+            line="71"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `NoOp` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;NoOp&quot; severity=&quot;warning&quot;>"
+        errorLine2="    ^">
+        <location
+            file="lint.xml"
+            line="71"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `IconExpectedSize` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;IconExpectedSize&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="80"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `IconExpectedSize` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;IconExpectedSize&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="80"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `IconExpectedSize` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;IconExpectedSize&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="80"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `UnusedIds` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;UnusedIds&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="85"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `UnusedIds` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;UnusedIds&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="85"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `UnusedIds` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;UnusedIds&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="85"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `EasterEgg` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;EasterEgg&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="88"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `EasterEgg` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;EasterEgg&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="88"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `EasterEgg` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;EasterEgg&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="88"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `PermissionNamingConvention` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;PermissionNamingConvention&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="91"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `PermissionNamingConvention` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;PermissionNamingConvention&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="91"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `PermissionNamingConvention` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;PermissionNamingConvention&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="91"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `StringFormatTrivial` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;StringFormatTrivial&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="94"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `StringFormatTrivial` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;StringFormatTrivial&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="94"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `StringFormatTrivial` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;StringFormatTrivial&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="94"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `WrongThreadInterprocedural` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;WrongThreadInterprocedural&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="97"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `WrongThreadInterprocedural` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;WrongThreadInterprocedural&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="97"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `WrongThreadInterprocedural` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;WrongThreadInterprocedural&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="97"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `MangledCRLF` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;MangledCRLF&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="103"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `MangledCRLF` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;MangledCRLF&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="103"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `MangledCRLF` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;MangledCRLF&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="103"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `AppLinksAutoVerify` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;AppLinksAutoVerify&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="114"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `AppLinksAutoVerify` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;AppLinksAutoVerify&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="114"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `AppLinksAutoVerify` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;AppLinksAutoVerify&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="114"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ValidActionsXml` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ValidActionsXml&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="117"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ValidActionsXml` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ValidActionsXml&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="117"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `ValidActionsXml` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;ValidActionsXml&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="117"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `KotlincFE10` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;KotlincFE10&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="120"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `KotlincFE10` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;KotlincFE10&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="120"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `KotlincFE10` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;KotlincFE10&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="120"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `MinSdkTooLow` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;MinSdkTooLow&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="123"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `MinSdkTooLow` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;MinSdkTooLow&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="123"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `MinSdkTooLow` was configured with severity `informational` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;MinSdkTooLow&quot; severity=&quot;informational&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="123"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `MemberExtensionConflict` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;MemberExtensionConflict&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="126"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `MemberExtensionConflict` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;MemberExtensionConflict&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="126"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="CannotEnableHidden"
+        message="Issue `MemberExtensionConflict` was configured with severity `warning` in app, but was not enabled (or was disabled) in library data"
+        errorLine1="    &lt;issue id=&quot;MemberExtensionConflict&quot; severity=&quot;warning&quot; />"
+        errorLine2="    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="lint.xml"
+            line="126"
+            column="5"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of org.jetbrains.kotlin.android than 2.2.20 is available: 2.2.21"
+        errorLine1="kotlin = &quot;2.2.20&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="11"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of org.jetbrains.kotlin.jvm than 2.2.20 is available: 2.2.21"
+        errorLine1="kotlin = &quot;2.2.20&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="11"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="NewerVersionAvailable"
+        message="A newer version of org.jetbrains.kotlin.plugin.compose than 2.2.20 is available: 2.2.21"
+        errorLine1="kotlin = &quot;2.2.20&quot;"
+        errorLine2="         ~~~~~~~~">
+        <location
+            file="../gradle/libs.versions.toml"
+            line="11"
+            column="10"/>
+    </issue>
+
+    <issue
+        id="ObsoleteSdkInt"
+        message="Unnecessary; `SDK_INT` is always >= 29"
+        errorLine1="        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {"
+        errorLine2="                   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~">
+        <location
+            file="src/main/kotlin/com/example/globaltranslation/data/network/NetworkMonitor.kt"
+            line="35"
+            column="20"/>
+    </issue>
+
+</issues>

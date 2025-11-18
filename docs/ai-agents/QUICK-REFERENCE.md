@@ -3,6 +3,7 @@
 ## 🏗️ Architecture
 
 **Multi-Module Clean Architecture** (3 modules):
+
 - `:core` - Pure Kotlin, domain models, interfaces
 - `:data` - Android Library, Room + ML Kit implementations
 - `:app` - Android App, Compose UI + ViewModels
@@ -74,7 +75,7 @@ class MyViewModel @Inject constructor(
 
 data class MyUiState(
     val data: String = "",
-    val isLoading: Boolean = false,
+    val getLoading: Boolean = false,
     val error: String? = null
 )
 ```
@@ -160,6 +161,7 @@ fun MyComponent(
 ## 📁 Project Structure
 
 ### Multi-Module Layout
+
 ```
 :core/src/main/kotlin/com/example/globaltranslation/core/
 ├── model/ (ConversationTurn)
@@ -291,7 +293,7 @@ fun updateData() {
 // ✅ DO use data classes for state
 data class MyUiState(
     val data: String = "",
-    val isLoading: Boolean = false,
+    val getLoading: Boolean = false,
     val error: String? = null
 )
 
@@ -307,25 +309,25 @@ packaging { jniLibs { useLegacyPackaging = false } }
 
 ## 🔍 Quick Troubleshooting
 
-| Error | Solution |
-|-------|----------|
-| Plugin `com.google.devtools.ksp` not found | Use KSP `2.2.20-2.0.2` (not 1.0.x) |
-| JVM target mismatch | Both compileOptions and kotlinOptions must be JVM 11 |
-| ClassNotFoundException: Application | Missing `kotlin.android` plugin |
-| Hilt_* classes not generated | 1. Add kotlin.android plugin<br>2. Run `./gradlew clean build` |
-| Import errors in ViewModel | Check Hilt and StateFlow imports |
-| Missing classes in R8 | Add ProGuard keep rules for data module classes |
-| 16KB page size crashes | Verify NDK ABI filters and useLegacyPackaging = false |
+| Error                                      | Solution                                                       |
+|--------------------------------------------|----------------------------------------------------------------|
+| Plugin `com.google.devtools.ksp` not found | Use KSP `2.2.20-2.0.2` (not 1.0.x)                             |
+| JVM target mismatch                        | Both compileOptions and kotlinOptions must be JVM 11           |
+| ClassNotFoundException: Application        | Missing `kotlin.android` plugin                                |
+| Hilt_* classes not generated               | 1. Add kotlin.android plugin<br>2. Run `./gradlew clean build` |
+| Import errors in ViewModel                 | Check Hilt and StateFlow imports                               |
+| Missing classes in R8                      | Add ProGuard keep rules for data module classes                |
+| 16KB page size crashes                     | Verify NDK ABI filters and useLegacyPackaging = false          |
 
 ## 📚 Documentation Files
 
-| File | Use Case |
-|------|----------|
-| `.cursorrules` | Quick patterns & build config |
-| `copilot-instructions.md` | Detailed architecture & patterns |
-| `copilot-analysis-rules.instructions.md` | Error prevention & debugging |
-| `docs/planning/docs/planning/Project Plan.md` | Implementation status |
-| `README.md` | Setup & user docs |
+| File                                          | Use Case                         |
+|-----------------------------------------------|----------------------------------|
+| `.cursorrules`                                | Quick patterns & build config    |
+| `copilot-instructions.md`                     | Detailed architecture & patterns |
+| `copilot-analysis-rules.instructions.md`      | Error prevention & debugging     |
+| `docs/planning/docs/planning/Project Plan.md` | Implementation status            |
+| `README.md`                                   | Setup & user docs                |
 
 ## 🎯 Before You Code
 
@@ -411,6 +413,7 @@ override suspend fun areModelsDownloaded(from: String, to: String): Boolean {
 ```
 
 **Critical ML Kit Behaviors:**
+
 - First-time downloads **require WiFi** (enforced by DownloadConditions)
 - `translate()` in MlKitTranslationProvider auto-downloads models if missing
 - Check status with `RemoteModelManager.getInstance()` (see provider implementation)
@@ -422,6 +425,7 @@ override suspend fun areModelsDownloaded(from: String, to: String): Boolean {
 ---
 
 **Need More Details?** See:
+
 - `.cursorrules` for patterns
 - `docs/ai-agents/copilot-instructions.md` for architecture
 - `docs/ai-agents/copilot-analysis-rules.instructions.md` for debugging

@@ -6,9 +6,11 @@
 
 ## 📋 Executive Summary
 
-This document originally outlined a 7-phase implementation plan. **Phases 1-2 have been implemented and are working in production.** This document is preserved as a reference for potential future enhancements.
+This document originally outlined a 7-phase implementation plan. **Phases 1-2 have been implemented and are working in
+production.** This document is preserved as a reference for potential future enhancements.
 
 ### ✅ Implemented Features (Production-Ready)
+
 - ✅ **Live conversation mode** - Real-time speech-to-speech with Room persistence
 - ✅ **Text input translation** - With history, TTS, clipboard integration
 - ✅ **Camera translation** - Real-time OCR + translation (Phase 2 ✅)
@@ -19,6 +21,7 @@ This document originally outlined a 7-phase implementation plan. **Phases 1-2 ha
 - ✅ **Material3 adaptive navigation** - NavigationSuiteScaffold
 
 ### 🔜 Future Enhancement Options (Not Currently Active)
+
 The following phases were outlined as potential future work but are **not currently in active development**:
 
 3. **Face-to-Face Conversation Mode (Split Screen)** - Not started
@@ -36,11 +39,14 @@ The following phases were outlined as potential future work but are **not curren
 **Dependencies**: None
 
 ### Overview
-Transform the app's design system to match Google Translate's expressive Material 3 style with large corner radii, soft colors, and modern typography.
+
+Transform the app's design system to match Google Translate's expressive Material 3 style with large corner radii, soft
+colors, and modern typography.
 
 ### Design Specifications
 
 #### Color Palette
+
 ```kotlin
 // New color scheme - Soft Lavender/Purple theme
 private val LightLavender = Color(0xFFE8DEF8)
@@ -60,6 +66,7 @@ MaterialTheme(
 ```
 
 #### Shape System - Large Corner Radii
+
 ```kotlin
 // Create custom shapes with very large corner radii
 val ExpressiveShapes = Shapes(
@@ -78,6 +85,7 @@ Button(
 ```
 
 #### Typography - Google Sans Style
+
 ```kotlin
 val ExpressiveTypography = Typography(
     displayLarge = TextStyle(
@@ -92,6 +100,7 @@ val ExpressiveTypography = Typography(
 ```
 
 ### Implementation Checklist
+
 - [ ] Create new `ExpressiveTheme.kt` in `ui/theme/`
 - [ ] Define lavender/purple color palette
 - [ ] Configure large corner radius shapes
@@ -101,6 +110,7 @@ val ExpressiveTypography = Typography(
 - [ ] Test on different screen sizes
 
 ### Files to Create/Modify
+
 - `app/src/main/java/com/example/globaltranslation/ui/theme/ExpressiveTheme.kt` (new)
 - `app/src/main/java/com/example/globaltranslation/ui/theme/Color.kt` (update)
 - `app/src/main/java/com/example/globaltranslation/ui/theme/Shape.kt` (new)
@@ -115,11 +125,14 @@ val ExpressiveTypography = Typography(
 **Dependencies**: Material 3 theme ✅, CameraX ✅, ML Kit Text Recognition v2 ✅
 
 ### Overview
-Implement real-time camera translation with augmented reality overlay, allowing users to point their camera at text and see instant translations.
+
+Implement real-time camera translation with augmented reality overlay, allowing users to point their camera at text and
+see instant translations.
 
 ### Technical Stack
 
 #### Required Dependencies
+
 ```kotlin
 // gradle/libs.versions.toml
 [versions]
@@ -138,6 +151,7 @@ mlkit-text-recognition = { module = "com.google.mlkit:text-recognition", version
 ```
 
 #### Architecture Pattern
+
 ```
 ui/camera/
 ├── CameraScreen.kt              # Main camera UI
@@ -154,6 +168,7 @@ services/
 ### Features to Implement
 
 #### 1. Camera Preview
+
 ```kotlin
 @Composable
 fun CameraScreen(
@@ -192,6 +207,7 @@ fun CameraScreen(
 ```
 
 #### 2. Text Recognition Service
+
 ```kotlin
 @Singleton
 class TextRecognitionService @Inject constructor() {
@@ -214,6 +230,7 @@ class TextRecognitionService @Inject constructor() {
 ```
 
 #### 3. Real-Time Translation Overlay
+
 ```kotlin
 @Composable
 fun TranslationOverlay(
@@ -243,6 +260,7 @@ fun TranslationOverlay(
 ```
 
 ### Implementation Checklist
+
 - [ ] Add CameraX dependencies
 - [ ] Add ML Kit Text Recognition v2
 - [ ] Request CAMERA permission in manifest
@@ -260,6 +278,7 @@ fun TranslationOverlay(
 - [ ] Create settings for overlay opacity
 
 ### UI/UX Considerations
+
 - **Real-time vs Freeze-frame**: Offer both continuous scanning and single-shot modes
 - **Performance**: Limit translation frequency (e.g., every 500ms) to avoid lag
 - **Text Selection**: Allow users to tap specific text blocks for translation
@@ -275,9 +294,12 @@ fun TranslationOverlay(
 **Dependencies**: Current conversation mode ✅, Material 3 theme ✅
 
 ### Overview
-Potential future enhancement to add a split-screen interface where translations appear upside-down for the person opposite, enabling natural face-to-face conversations.
+
+Potential future enhancement to add a split-screen interface where translations appear upside-down for the person
+opposite, enabling natural face-to-face conversations.
 
 ### Architecture Pattern
+
 ```
 ui/conversation/
 ├── FaceToFaceModeScreen.kt      # Split screen layout
@@ -288,6 +310,7 @@ ui/conversation/
 ### Features to Implement
 
 #### 1. Split Screen Layout
+
 ```kotlin
 @Composable
 fun FaceToFaceModeScreen(
@@ -340,7 +363,7 @@ fun FaceToFaceModeScreen(
                 .offset(y = (-32).dp)
         ) {
             Icon(
-                if (uiState.isListening) Icons.Default.Stop else Icons.Default.Mic,
+                if (uiState.getListening) Icons.Default.Stop else Icons.Default.Mic,
                 contentDescription = "Toggle listening"
             )
         }
@@ -349,6 +372,7 @@ fun FaceToFaceModeScreen(
 ```
 
 #### 2. Auto Language Detection
+
 ```kotlin
 @HiltViewModel
 class FaceToFaceModeViewModel @Inject constructor(
@@ -361,7 +385,7 @@ class FaceToFaceModeViewModel @Inject constructor(
     
     fun toggleListening() {
         viewModelScope.launch {
-            if (_uiState.value.isListening) {
+            if (_uiState.value.getListening) {
                 stopListening()
             } else {
                 startListening()
@@ -370,7 +394,7 @@ class FaceToFaceModeViewModel @Inject constructor(
     }
     
     private suspend fun startListening() {
-        _uiState.value = _uiState.value.copy(isListening = true)
+        _uiState.value = _uiState.value.copy(getListening = true)
         
         speechService.listen(Locale.getDefault()).collect { event ->
             when (event) {
@@ -394,6 +418,7 @@ class FaceToFaceModeViewModel @Inject constructor(
 ```
 
 ### Implementation Checklist
+
 - [ ] Create FaceToFaceModeScreen with split layout
 - [ ] Implement 180-degree rotation for top half
 - [ ] Add auto language detection
@@ -401,9 +426,9 @@ class FaceToFaceModeViewModel @Inject constructor(
 - [ ] Add visual indicator for active speaker
 - [ ] Implement "Auto language detection is on" popup
 - [ ] Create settings bottom sheet:
-  - [ ] Text size slider
-  - [ ] Auto-playback toggle
-  - [ ] Manual language switch
+    - [ ] Text size slider
+    - [ ] Auto-playback toggle
+    - [ ] Manual language switch
 - [ ] Add microphone pulsating animation
 - [ ] Handle orientation changes gracefully
 - [ ] Add consent dialog for audio processing
@@ -419,11 +444,14 @@ class FaceToFaceModeViewModel @Inject constructor(
 **Dependencies**: Gemini API integration, user authentication (optional)
 
 ### Overview
-Potential future enhancement for AI language learning where users can practice conversations with Gemini AI in their target language, with personalized scenarios and progress tracking.
+
+Potential future enhancement for AI language learning where users can practice conversations with Gemini AI in their
+target language, with personalized scenarios and progress tracking.
 
 ### Technical Stack
 
 #### Required Dependencies
+
 ```kotlin
 // gradle/libs.versions.toml
 [versions]
@@ -434,6 +462,7 @@ google-generativeai = { module = "com.google.ai.client.generativeai:generativeai
 ```
 
 ### Architecture Pattern
+
 ```
 ui/practice/
 ├── PracticeOnboardingFlow.kt    # Multi-step setup
@@ -456,6 +485,7 @@ data/
 ### Features to Implement
 
 #### 1. Onboarding Flow
+
 ```kotlin
 @Composable
 fun PracticeOnboardingFlow(
@@ -507,6 +537,7 @@ enum class LearningGoal {
 ```
 
 #### 2. Gemini Service Integration
+
 ```kotlin
 @Singleton
 class GeminiService @Inject constructor() {
@@ -567,6 +598,7 @@ data class PracticeScenario(
 ```
 
 #### 3. Practice Chat Interface
+
 ```kotlin
 @Composable
 fun PracticeConversationScreen(
@@ -638,6 +670,7 @@ fun PracticeConversationScreen(
 ```
 
 #### 4. Progress Tracking Dashboard
+
 ```kotlin
 @Composable
 fun PracticeHomeScreen(
@@ -702,25 +735,26 @@ fun PracticeHomeScreen(
 ```
 
 ### Implementation Checklist
+
 - [ ] Add Gemini API dependency
 - [ ] Create API key configuration (BuildConfig)
 - [ ] Implement onboarding flow:
-  - [ ] Welcome screen
-  - [ ] Language selection
-  - [ ] Proficiency level selection
-  - [ ] Goal selection
+    - [ ] Welcome screen
+    - [ ] Language selection
+    - [ ] Proficiency level selection
+    - [ ] Goal selection
 - [ ] Build GeminiService for chat
 - [ ] Create scenario generation logic
 - [ ] Implement chat interface
 - [ ] Add message translation feature
 - [ ] Build progress tracking:
-  - [ ] Daily goals
-  - [ ] Star system
-  - [ ] New words counter
+    - [ ] Daily goals
+    - [ ] Star system
+    - [ ] New words counter
 - [ ] Create Room database for:
-  - [ ] User profile
-  - [ ] Practice history
-  - [ ] Custom scenarios
+    - [ ] User profile
+    - [ ] Practice history
+    - [ ] Custom scenarios
 - [ ] Implement custom scenario creation
 - [ ] Add hints/suggestions system
 - [ ] Create feedback mechanism
@@ -739,9 +773,12 @@ fun PracticeHomeScreen(
 **Dependencies**: Camera translation infrastructure ✅
 
 ### Overview
-Potential future enhancement to allow users to upload or capture images and translate all text within them, with the option to save or share translated images.
+
+Potential future enhancement to allow users to upload or capture images and translate all text within them, with the
+option to save or share translated images.
 
 ### Architecture Pattern
+
 ```
 ui/image/
 ├── ImageTranslationScreen.kt    # Image picker + result
@@ -755,6 +792,7 @@ services/
 ### Features to Implement
 
 #### 1. Image Picker & Capture
+
 ```kotlin
 @Composable
 fun ImageTranslationScreen(
@@ -812,6 +850,7 @@ fun ImageTranslationScreen(
 ```
 
 #### 2. Image Translation Service
+
 ```kotlin
 @Singleton
 class ImageTranslationService @Inject constructor(
@@ -898,6 +937,7 @@ class ImageTranslationService @Inject constructor(
 ```
 
 ### Implementation Checklist
+
 - [ ] Create ImageTranslationScreen
 - [ ] Add image picker (gallery)
 - [ ] Add camera capture option
@@ -923,11 +963,14 @@ class ImageTranslationService @Inject constructor(
 **Dependencies**: Room database ✅ (already available)
 
 ### Overview
-Potential future enhancement to allow users to save frequently used translations for quick access, organized by categories with search and sync capabilities.
+
+Potential future enhancement to allow users to save frequently used translations for quick access, organized by
+categories with search and sync capabilities.
 
 ### Technical Stack
 
 #### Required Dependencies
+
 ```kotlin
 // gradle/libs.versions.toml
 [versions]
@@ -940,6 +983,7 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 ```
 
 ### Architecture Pattern
+
 ```
 ui/phrasebook/
 ├── PhrasebookScreen.kt          # Main phrasebook view
@@ -960,6 +1004,7 @@ data/
 ### Features to Implement
 
 #### 1. Database Schema
+
 ```kotlin
 @Entity(tableName = "saved_phrases")
 data class SavedPhrase(
@@ -1010,6 +1055,7 @@ interface PhrasebookDao {
 ```
 
 #### 2. Phrasebook UI
+
 ```kotlin
 @Composable
 fun PhrasebookScreen(
@@ -1090,6 +1136,7 @@ fun PhrasebookScreen(
 ```
 
 #### 3. Quick Save Feature
+
 ```kotlin
 // Add to translation result screens
 @Composable
@@ -1115,6 +1162,7 @@ fun TranslationResultCard(
 ```
 
 ### Implementation Checklist
+
 - [ ] Add Room dependencies
 - [ ] Create database entities (SavedPhrase, PhraseCategory)
 - [ ] Build PhrasebookDao
@@ -1140,20 +1188,25 @@ fun TranslationResultCard(
 **Dependencies**: Material 3 theme ✅
 
 ### Overview
-UI/UX enhancement phase with some features already implemented and others remaining as future enhancements. The app currently includes advanced Material 3 components and patterns not originally planned.
+
+UI/UX enhancement phase with some features already implemented and others remaining as future enhancements. The app
+currently includes advanced Material 3 components and patterns not originally planned.
 
 ### ✅ Already Implemented (Not Previously Documented)
+
 - **Material 3 HorizontalCenteredHeroCarousel** (LanguageScreen) - Compose BOM 2025.10.00 feature
 - **Pull-to-refresh pattern** (ConversationScreen) - Access saved Room history
 - **Network status indicators** (LanguageScreen) - WiFi/Cellular/Offline monitoring
 - **Basic scroll animations** (ConversationScreen) - Auto-scroll to latest message
 
 ### 🔜 Remaining Phase 7 Features
+
 Potential future enhancements to further polish the user experience:
 
 ### Features to Implement
 
 #### 1. Promotional/Discovery Cards
+
 ```kotlin
 @Composable
 fun PromotionalCard(
@@ -1208,6 +1261,7 @@ fun PromotionalCard(
 ```
 
 #### 2. Smooth Animations
+
 ```kotlin
 // Page transitions
 val pageTransition = slideIntoContainer(
@@ -1233,9 +1287,9 @@ fun ShimmerLoadingCard() {
 
 // Microphone pulse animation
 @Composable
-fun PulsingMicrophone(isListening: Boolean) {
+fun PulsingMicrophone(getListening: Boolean) {
     val scale by animateFloatAsState(
-        targetValue = if (isListening) 1.2f else 1f,
+        targetValue = if (getListening) 1.2f else 1f,
         animationSpec = tween(300)
     )
     
@@ -1245,7 +1299,7 @@ fun PulsingMicrophone(isListening: Boolean) {
         modifier = Modifier
             .scale(scale)
             .graphicsLayer {
-                if (isListening) {
+                if (getListening) {
                     alpha = 0.5f + (scale - 1f) * 2.5f
                 }
             }
@@ -1254,6 +1308,7 @@ fun PulsingMicrophone(isListening: Boolean) {
 ```
 
 #### 3. Paste Chip Button
+
 ```kotlin
 @Composable
 fun PasteChip(
@@ -1284,23 +1339,27 @@ fun PasteChip(
 ### Implementation Checklist
 
 **Already Complete** ✅:
+
 - [x] Material 3 carousel component (LanguageScreen)
 - [x] Network status monitoring (LanguageScreen)
 - [x] Pull-to-refresh pattern (ConversationScreen)
 - [x] Basic scroll animations (ConversationScreen)
 
 **Quick Wins** ⚡ (Easy to implement):
+
 - [ ] Add Paste chip to text input (1-2 hours, high impact)
 - [ ] Implement microphone pulse animation (2-3 hours, medium impact)
 - [ ] Add empty states with illustrations (3-4 hours, high impact)
 
 **Medium Effort** 📝:
+
 - [ ] Add loading skeletons/shimmers (4-6 hours)
 - [ ] Create smooth page transitions (4-6 hours)
 - [ ] Add haptic feedback for key actions (4-6 hours)
 - [ ] Implement swipe gestures for history (4-6 hours)
 
 **Lower Priority** 📌:
+
 - [ ] Add promotional card to main screen (6-8 hours)
 - [ ] Implement card dismissal persistence (2-3 hours)
 - [ ] Create bottom sheet animations (4-6 hours)
@@ -1362,6 +1421,7 @@ androidx-room-compiler = { module = "androidx.room:room-compiler", version.ref =
 ## 🗓️ Implementation Timeline
 
 ### ✅ Completed Phases (October 2025)
+
 - ✅ **Phase 1: Material 3 Theme** - Completed October 8, 2025
 - ✅ **Phase 2: Camera Translation** - Completed October 8-9, 2025
 - ✅ **Architecture Refactoring** - Completed October 10, 2025
@@ -1380,24 +1440,28 @@ The following phases were originally planned but are not currently in developmen
 - Phase 6: Phrasebook (1-2 weeks estimated)
 - Phase 7: UI/UX Polish (1-2 weeks estimated)
 
-**Note**: The above timeline is preserved for reference only. The app is currently feature-complete for its core translation capabilities.
+**Note**: The above timeline is preserved for reference only. The app is currently feature-complete for its core
+translation capabilities.
 
 ---
 
 ## 🎯 Success Metrics
 
 ### User Engagement
+
 - Daily active users increase by 50%
 - Average session duration increase by 3x
 - Feature adoption rate > 40% within 3 months
 
 ### Technical Performance
+
 - Camera translation < 1s latency
 - OCR accuracy > 95%
 - AI response time < 2s
 - App crash rate < 0.1%
 
 ### User Satisfaction
+
 - App store rating > 4.5 stars
 - Feature satisfaction score > 85%
 - Net Promoter Score (NPS) > 50
@@ -1407,18 +1471,21 @@ The following phases were originally planned but are not currently in developmen
 ## 🔒 Security & Privacy Considerations
 
 ### Data Handling
+
 - **Camera/Images**: Process locally when possible, clear consent for cloud processing
 - **Voice Data**: Comply with GDPR/CCPA, provide data deletion options
 - **AI Conversations**: Encrypt stored conversations, option to disable history
 - **Phrasebook Sync**: End-to-end encryption for cloud sync
 
 ### API Keys
+
 - Store Gemini API key securely (BuildConfig, not in VCS)
 - Implement rate limiting
 - Use ProGuard/R8 for release builds
 - Add API key rotation mechanism
 
 ### Permissions
+
 - Request permissions just-in-time (when feature is used)
 - Provide clear explanations for each permission
 - Gracefully handle permission denials
@@ -1431,6 +1498,7 @@ The following phases were originally planned but are not currently in developmen
 ### ✅ Planned Features Implemented
 
 All infrastructure, dependencies, and planned core features have been implemented:
+
 - ✅ Build configuration stable (AGP 8.13.0, Kotlin 2.2.20)
 - ✅ Multi-module architecture in place (:core, :data, :app)
 - ✅ All dependencies configured (CameraX, ML Kit, Room, Hilt)
@@ -1441,6 +1509,7 @@ All infrastructure, dependencies, and planned core features have been implemente
 ### 🔜 If Resuming Future Development
 
 Should development resume for Phases 3-7:
+
 1. Review and prioritize remaining phases based on user feedback
 2. Create detailed implementation tickets for chosen phase
 3. Design mockups for new features in Figma

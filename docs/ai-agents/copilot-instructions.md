@@ -5,11 +5,16 @@ applyTo: '**/*'
 # Copilot Instructions for GlobalTranslation Android App
 
 ## Project Overview
-**PRODUCTION-READY** Android translation app with **multi-module clean architecture** using Jetpack Compose and ML Kit. Core features complete: live conversation translation, text input translation, camera translation, and language management. Architecture refactored into :core, :data, and :app modules for optimal testability and maintainability. **Now includes comprehensive 16KB page size support** for ARM64 devices and Google Play compliance.
+
+**PRODUCTION-READY** Android translation app with **multi-module clean architecture** using Jetpack Compose and ML Kit.
+Core features complete: live conversation translation, text input translation, camera translation, and language
+management. Architecture refactored into :core, :data, and :app modules for optimal testability and maintainability. *
+*Now includes comprehensive 16KB page size support** for ARM64 devices and Google Play compliance.
 
 ## Critical Build Setup (MUST READ FIRST)
 
 ### Stable Build Configuration
+
 - **AGP Version**: Uses stable AGP 8.13.0 with reliable Hilt integration
 - **Kotlin Version**: Kotlin 2.2.20 (latest stable)
 - **KSP Version**: 2.2.20-2.0.2 (matches Kotlin version - note: KSP versioning changed from 1.0.x to 2.0.x)
@@ -19,6 +24,7 @@ applyTo: '**/*'
 - **16KB Page Size**: Full ARM64 support with Google Play compliance
 
 ### Dependency Management
+
 - **Version Catalogs**: All dependencies in `gradle/libs.versions.toml` using `libs.` references
 - **Required Plugins**: `kotlin.android`, `kotlin.compose`, `ksp`, `hilt` all properly configured
 - **ML Kit**: Only translation (`mlkit-translate:17.0.3`) - speech recognition removed due to version conflicts
@@ -27,6 +33,7 @@ applyTo: '**/*'
 ## Current Architecture - Multi-Module Clean Architecture
 
 ### Module Structure ✅
+
 ```
 :core (Pure Kotlin, no Android)
 ├── model/ (ConversationTurn)
@@ -48,12 +55,14 @@ applyTo: '**/*'
 **Package Name**: `com.example.globaltranslation` (fixed from gloabtranslation)
 
 ### Navigation Structure
+
 - **Single Activity**: `MainActivity.kt` with `NavigationSuiteScaffold`
 - **Destinations**: Defined in `AppDestinations` enum (CONVERSATION, TEXT_INPUT, CAMERA, LANGUAGES)
 - **Adaptive UI**: Uses Material3 adaptive navigation suite for different screen sizes
 - **Current state**: ✅ All screens fully implemented and functional
 
 ### Hilt Setup ✅ COMPLETE
+
 ```kotlin
 // Application class configured
 @HiltAndroidApp
@@ -70,21 +79,25 @@ class MainActivity : ComponentActivity()
 ## ✅ Implemented Features - FULLY FUNCTIONAL
 
 ### Package Structure
+
 All features have been successfully implemented:
 
 **:core module** (Pure Kotlin):
+
 - `model/` - ✅ ConversationTurn domain model
 - `provider/` - ✅ 5 interfaces (Translation, Speech, TTS, OCR, Camera)
 - `repository/` - ✅ ConversationRepository interface
 - `util/` - ✅ TextBlockGroupingUtil business logic
 
 **:data module** (Android Library):
+
 - `provider/` - ✅ ML Kit & Android implementations (5 providers)
 - `repository/` - ✅ Room-based ConversationRepository
 - `local/` - ✅ Room database (DAO, entities)
 - `di/` - ✅ ProviderModule for dependency injection
 
 **:app module** (Android App):
+
 - `ui/conversation/` - ✅ Live conversation translation with voice I/O + persistence
 - `ui/textinput/` - ✅ Manual text translation with history management
 - `ui/camera/` - ✅ Real-time OCR translation with CameraX
@@ -96,6 +109,7 @@ All features have been successfully implemented:
 ### Key Implementation Patterns (When Building Features)
 
 #### Provider Pattern (Clean Architecture)
+
 ```kotlin
 // Interface definition in :core module
 interface TranslationProvider {
@@ -141,6 +155,7 @@ class MlKitTranslationProvider @Inject constructor() : TranslationProvider {
 ```
 
 **ML Kit Translation Best Practices:**
+
 - ✅ **Model Checking**: Use `areModelsDownloaded()` to check status without downloading
 - ✅ **WiFi Requirement**: First-time downloads require WiFi connection
 - ✅ **Auto-Download**: `translate()` automatically downloads models if missing (on WiFi)
@@ -150,11 +165,13 @@ class MlKitTranslationProvider @Inject constructor() : TranslationProvider {
 - ❌ **DON'T**: Forget to handle cellular network errors
 
 #### Speech Recognition Alternative
+
 - **Do NOT use** ML Kit speech - use Android's built-in `SpeechRecognizer`
 - No additional dependencies needed, more stable than ML Kit version
 - Pattern: `SpeechRecognizer.createSpeechRecognizer(context)`
 
 #### Hilt Provider Binding Pattern
+
 ```kotlin
 // In :data/di/ProviderModule.kt
 @Module
@@ -182,6 +199,7 @@ abstract class ProviderModule {
 ```
 
 **Why @Binds instead of @Provides:**
+
 - Generates less code (abstract methods)
 - Enforces interface-based programming
 - Better for testing (easy to swap implementations)
@@ -206,7 +224,7 @@ class ConversationViewModel @Inject constructor(
     // Always use viewModelScope for automatic cancellation
     fun translateAndSave(text: String, fromLang: String, toLang: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isTranslating = true)
+            _uiState.value = _uiState.value.copy(getTranslating = true)
             try {
                 val result = translationProvider.translate(text, fromLang, toLang)
                 result.fold(
@@ -221,7 +239,7 @@ class ConversationViewModel @Inject constructor(
                         // Update UI state
                         _uiState.value = _uiState.value.copy(
                             conversationHistory = _uiState.value.conversationHistory + turn,
-                            isTranslating = false
+                            getTranslating = false
                         )
                         
                         // Persist to Room database
@@ -230,14 +248,14 @@ class ConversationViewModel @Inject constructor(
                     onFailure = { exception ->
                         _uiState.value = _uiState.value.copy(
                             error = exception.message,
-                            isTranslating = false
+                            getTranslating = false
                         )
                     }
                 )
             } catch (e: Exception) {
                 _uiState.value = _uiState.value.copy(
                     error = e.message,
-                    isTranslating = false
+                    getTranslating = false
                 )
             }
         }
@@ -254,12 +272,13 @@ class ConversationViewModel @Inject constructor(
 // Data class for immutable state
 data class ConversationUiState(
     val conversationHistory: List<ConversationTurn> = emptyList(),
-    val isTranslating: Boolean = false,
+    val getTranslating: Boolean = false,
     val error: String? = null
 )
 ```
 
 **Why This Pattern?**
+
 - ✅ Immutable state exposure prevents external modification
 - ✅ Single source of truth maintained
 - ✅ Thread-safe state updates
@@ -269,6 +288,7 @@ data class ConversationUiState(
 ## Development Workflow
 
 ### Build System
+
 - **Kotlin DSL**: All build files use `.gradle.kts` format
 - **Namespace**: `com.example.globaltranslation` (typo fixed in architecture refactoring)
 - **Target SDK**: 36 (latest Android)
@@ -298,11 +318,13 @@ data class ConversationUiState(
   ```
 
 ### File Organization
+
 - Follow the refactoring plan in `docs/planning/docs/planning/Project Plan.md` when implementing features
 - Template files should be renamed: `ui/home` → `ui/conversation`, `ui/gallery` → `ui/textinput`, etc.
 - Services go in dedicated `services/` package, not mixed with UI code
 
 ### Compose Patterns
+
 - Use `@PreviewScreenSizes` for responsive design testing
 - Theme defined in `ui/theme/` - leverage existing `GloabTranslationTheme`
 - Material3 with adaptive navigation suite for cross-device compatibility
@@ -310,6 +332,7 @@ data class ConversationUiState(
 ## Project-Specific Conventions
 
 ### Current Navigation Pattern
+
 ```kotlin
 // AppDestinations enum drives navigation in MainActivity.kt
 enum class AppDestinations(val label: String, val icon: ImageVector) {
@@ -320,7 +343,9 @@ enum class AppDestinations(val label: String, val icon: ImageVector) {
 ```
 
 ### Required Permissions ✅ IMPLEMENTED
+
 Already configured in `AndroidManifest.xml`:
+
 ```xml
 <uses-permission android:name="android.permission.RECORD_AUDIO" />
 <uses-permission android:name="android.permission.INTERNET" />
@@ -339,34 +364,34 @@ Already configured in `AndroidManifest.xml`:
 ### Implementation Complete ✅
 
 1. ✅ **Complete service layer** with Hilt dependency injection
-   - All services use @Singleton and @Inject
-   - Proper resource cleanup in ViewModels
-   - Flow-based reactive APIs
-   - Model deletion support
+    - All services use @Singleton and @Inject
+    - Proper resource cleanup in ViewModels
+    - Flow-based reactive APIs
+    - Model deletion support
 
 2. ✅ **All three main screens** with full functionality
-   - ConversationScreen: Live voice translation with TTS
-   - TextInputScreen: Manual text translation with history, clipboard copy, and TTS
-   - LanguageScreen: Model download, deletion, and status management
+    - ConversationScreen: Live voice translation with TTS
+    - TextInputScreen: Manual text translation with history, clipboard copy, and TTS
+    - LanguageScreen: Model download, deletion, and status management
 
 3. ✅ **Voice translation** with speech recognition and TTS
-   - Real-time speech recognition with Flow
-   - Auto-play translation support
-   - Comprehensive error handling
+    - Real-time speech recognition with Flow
+    - Auto-play translation support
+    - Comprehensive error handling
 
 4. ✅ **Manual text translation** with complete feature set
-   - Translation history with timestamps
-   - Copy to clipboard functionality
-   - Copy to input functionality (separate buttons with distinct icons)
-   - Text-to-speech for original and translated text
-   - Language swapping
+    - Translation history with timestamps
+    - Copy to clipboard functionality
+    - Copy to input functionality (separate buttons with distinct icons)
+    - Text-to-speech for original and translated text
+    - Language swapping
 
 5. ✅ **Language model management** interface
-   - 20+ supported languages
-   - Dynamic download status checking
-   - WiFi-only model downloads
-   - Delete models to free storage space
-   - Protected English model (cannot be deleted)
+    - 20+ supported languages
+    - Dynamic download status checking
+    - WiFi-only model downloads
+    - Delete models to free storage space
+    - Protected English model (cannot be deleted)
 
 ### StateFlow Verification ✅
 
@@ -397,6 +422,7 @@ val uiState: StateFlow<LanguageUiState> = _uiState.asStateFlow()
 ✅ No Deprecated API Usage
 ✅ Material3 Throughout
 ```
+
 ```
 
 #### Compose UI Testing
@@ -406,7 +432,7 @@ val uiState: StateFlow<LanguageUiState> = _uiState.asStateFlow()
 fun `conversation screen shows microphone button when not listening`() {
     composeTestRule.setContent {
         ConversationScreen(
-            isListening = false,
+            getListening = false,
             onStartListening = { }
         )
     }
@@ -426,11 +452,13 @@ Add to `AndroidManifest.xml`:
 ## Project-Specific Conventions
 
 ### File Organization
+
 - Follow the refactoring plan in `docs/planning/docs/planning/Project Plan.md` when implementing features
 - Template files should be renamed: `ui/home` → `ui/conversation`, `ui/gallery` → `ui/textinput`, etc.
 - Services go in dedicated `services/` package, not mixed with UI code
 
 ### Compose Patterns
+
 - Use `@PreviewScreenSizes` for responsive design testing
 - Theme defined in `ui/theme/` - leverage existing `GloabTranslationTheme`
 - Material3 with adaptive navigation suite for cross-device compatibility
@@ -438,6 +466,7 @@ Add to `AndroidManifest.xml`:
 ## Testing Strategy
 
 ### Provider Testing with Fakes
+
 ```kotlin
 // Create fake provider in test/fake/ directory
 class FakeTranslationProvider : TranslationProvider {
@@ -472,6 +501,7 @@ abstract class TestProviderModule {
 ```
 
 ### ViewModel Testing with Fake Providers
+
 ```kotlin
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -514,6 +544,7 @@ class ConversationViewModelTest {
 ```
 
 ### Compose UI Testing with Hilt
+
 ```kotlin
 @HiltAndroidTest
 @RunWith(AndroidJUnit4::class)
@@ -549,22 +580,26 @@ class ConversationScreenTest {
 ## Architecture Constraints
 
 ### State Management Rules
+
 - **Single Source of Truth**: Each screen has one ViewModel holding all UI state
-- **No Direct Service Access**: Compose screens never call services directly, only through ViewModels  
+- **No Direct Service Access**: Compose screens never call services directly, only through ViewModels
 - **Immutable State**: Use data classes with copy() for state updates
 - **Error Handling**: Always wrap service calls in try/catch with proper error states
 
 ### ML Kit Integration Constraints
+
 - **Model Management**: Check model availability before translation attempts
 - **Offline Handling**: Gracefully handle missing language models with download prompts
 - **Memory Management**: Properly close ML Kit clients in ViewModel onCleared()
 
 ### Navigation Architecture
+
 - **No Navigation in ViewModels**: Navigation events must be handled at Compose level
 - **Shared State**: Use SavedStateHandle for data that survives process death
 - **Deep Links**: Plan for deep link support in navigation structure
 
-### Performance Guidelines  
+### Performance Guidelines
+
 - **LazyColumn**: Use for any list with >10 items (conversation history, language list)
 - **Image Loading**: Use Coil for any future image features
 - **Background Work**: ML Kit operations must run on background threads via viewModelScope
@@ -583,6 +618,7 @@ When extending this completed app:
 ## 📱 16KB Page Size Support (NEW)
 
 ### Implementation Complete ✅
+
 - **NDK Configuration**: All ABIs properly configured for 16KB alignment
 - **Build Variants**: `sixteenKB` test variant for validation
 - **Room Database**: Automatic 16KB page size handling with Room 2.7+
@@ -592,6 +628,7 @@ When extending this completed app:
 - **Data Safety**: Existing user data preserved - no migration required
 
 ### Testing 16KB Compatibility
+
 ```bash
 # Test 16KB build variant
 ./gradlew :app:assembleSixteenKB
@@ -601,14 +638,17 @@ When extending this completed app:
 ```
 
 ### Google Play Compliance
+
 - ✅ **Ready for 2025 requirements** - Full ARM64 16KB page size support
 - ✅ **Backward compatible** - Works on 4KB devices without issues
 - ✅ **Data preservation** - Room automatically handles page size differences
 - ✅ **Native library alignment** - All ML Kit libraries properly configured
 
 ## Future Enhancement Areas
+
 Potential areas for expansion:
+
 1. Add unit tests for ViewModels and services
-2. Implement UI tests for complex user flows  
+2. Implement UI tests for complex user flows
 3. Add more language pairs or specialized translation features
 4. Integrate additional ML Kit features (handwriting, etc.)

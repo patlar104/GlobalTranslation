@@ -2,6 +2,7 @@ package com.example.globaltranslation.data.migration
 
 import android.content.Context
 import android.util.Log
+import com.example.globaltranslation.data.BuildConfig
 import com.example.globaltranslation.data.local.ConversationDatabase
 import com.example.globaltranslation.data.preferences.AppPreferences
 import com.example.globaltranslation.data.preferences.LanguageModelPreferences
@@ -37,22 +38,22 @@ class AppMigrationManager @Inject constructor(
         
         when {
             isFirstLaunch -> {
-                Log.d(TAG, "First app launch (version $currentVersionCode)")
+                if (BuildConfig.DEBUG) Log.d(TAG, "First app launch (version $currentVersionCode)")
                 // Initialize app for first time
                 handleFirstLaunch(currentVersionCode)
             }
             lastVersionCode < currentVersionCode -> {
-                Log.d(TAG, "App updated from version $lastVersionCode to $currentVersionCode")
+                if (BuildConfig.DEBUG) Log.d(TAG, "App updated from version $lastVersionCode to $currentVersionCode")
                 // Handle upgrade
                 handleAppUpgrade(lastVersionCode, currentVersionCode)
             }
             lastVersionCode > currentVersionCode -> {
-                Log.d(TAG, "App downgraded from version $lastVersionCode to $currentVersionCode")
+                if (BuildConfig.DEBUG) Log.d(TAG, "App downgraded from version $lastVersionCode to $currentVersionCode")
                 // Handle downgrade (rare, but possible during development)
                 handleAppDowngrade(lastVersionCode, currentVersionCode)
             }
             else -> {
-                Log.d(TAG, "App version unchanged ($currentVersionCode)")
+                if (BuildConfig.DEBUG) Log.d(TAG, "App version unchanged ($currentVersionCode)")
                 // No migration needed
             }
         }
@@ -68,11 +69,11 @@ class AppMigrationManager @Inject constructor(
         try {
             // Mark as launched
             appPreferences.markLaunched()
-            
+
             // Initialize default preferences
             appPreferences.setAllowCellularDownloads(false)
-            
-            Log.d(TAG, "First launch initialization complete")
+
+            if (BuildConfig.DEBUG) Log.d(TAG, "First launch initialization complete")
         } catch (e: Exception) {
             Log.e(TAG, "Error during first launch initialization", e)
         }
@@ -83,19 +84,19 @@ class AppMigrationManager @Inject constructor(
      */
     private suspend fun handleAppUpgrade(fromVersion: Int, toVersion: Int) {
         try {
-            Log.d(TAG, "Performing upgrade migration from v$fromVersion to v$toVersion")
-            
+            if (BuildConfig.DEBUG) Log.d(TAG, "Performing upgrade migration from v$fromVersion to v$toVersion")
+
             // Example version-specific migrations:
             // if (fromVersion < 2 && toVersion >= 2) {
             //     // Migration for version 2
             //     migrateToVersion2()
             // }
-            
+
             // For now, we validate existing data but don't clear it
             // This is safer than destructive migration
             validateExistingData()
-            
-            Log.d(TAG, "Upgrade migration complete")
+
+            if (BuildConfig.DEBUG) Log.d(TAG, "Upgrade migration complete")
         } catch (e: Exception) {
             Log.e(TAG, "Error during app upgrade migration", e)
             // On migration error, you might want to clear corrupted data
@@ -108,12 +109,12 @@ class AppMigrationManager @Inject constructor(
      */
     private suspend fun handleAppDowngrade(fromVersion: Int, toVersion: Int) {
         try {
-            Log.d(TAG, "App downgraded - clearing potentially incompatible data")
-            
+            if (BuildConfig.DEBUG) Log.d(TAG, "App downgraded - clearing potentially incompatible data")
+
             // Downgrade is risky - clear cached data to prevent crashes
             clearAppCache()
-            
-            Log.d(TAG, "Downgrade cleanup complete")
+
+            if (BuildConfig.DEBUG) Log.d(TAG, "Downgrade cleanup complete")
         } catch (e: Exception) {
             Log.e(TAG, "Error during app downgrade", e)
         }
@@ -129,7 +130,7 @@ class AppMigrationManager @Inject constructor(
             val conversations = dao.getAllConversations()
             // Just accessing the Flow validates the database structure
             conversations.first()
-            Log.d(TAG, "Database validation passed")
+            if (BuildConfig.DEBUG) Log.d(TAG, "Database validation passed")
         } catch (e: Exception) {
             Log.e(TAG, "Database validation failed - may need rebuild", e)
             // Database might be corrupted - the fallbackToDestructiveMigrationOnDowngrade will handle it
@@ -144,13 +145,13 @@ class AppMigrationManager @Inject constructor(
         try {
             // Clear language model download status cache
             // (actual models stay on disk, just the status tracking is cleared)
-            // languageModelPreferences.clearAll() 
+            // languageModelPreferences.clearAll()
             // Uncomment if you want to clear model tracking on downgrade
-            
+
             // Clear app cache directory
             context.cacheDir.deleteRecursively()
-            
-            Log.d(TAG, "App cache cleared")
+
+            if (BuildConfig.DEBUG) Log.d(TAG, "App cache cleared")
         } catch (e: Exception) {
             Log.e(TAG, "Error clearing app cache", e)
         }
@@ -163,18 +164,18 @@ class AppMigrationManager @Inject constructor(
     suspend fun clearAllAppData() {
         try {
             Log.w(TAG, "Clearing all app data - this is destructive!")
-            
+
             // Clear all preferences
             appPreferences.clearAll()
             languageModelPreferences.clearAll()
-            
+
             // Clear database
             conversationDatabase.clearAllTables()
-            
+
             // Clear cache
             context.cacheDir.deleteRecursively()
-            
-            Log.d(TAG, "All app data cleared")
+
+            if (BuildConfig.DEBUG) Log.d(TAG, "All app data cleared")
         } catch (e: Exception) {
             Log.e(TAG, "Error clearing app data", e)
         }

@@ -32,14 +32,11 @@ open class NetworkMonitor @Inject constructor(
      * For Android 6.0+, this permission is granted at install time, but we check for safety.
      */
     private fun hasNetworkStatePermission(): Boolean {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            ContextCompat.checkSelfPermission(
-                context,
-                android.Manifest.permission.ACCESS_NETWORK_STATE
-            ) == PackageManager.PERMISSION_GRANTED
-        } else {
-            true // Permission granted at install time for older Android versions
-        }
+        // Since minSdk is 29, we're always on Android 6.0+
+        return ContextCompat.checkSelfPermission(
+            context,
+            android.Manifest.permission.ACCESS_NETWORK_STATE
+        ) == PackageManager.PERMISSION_GRANTED
     }
     
     /**

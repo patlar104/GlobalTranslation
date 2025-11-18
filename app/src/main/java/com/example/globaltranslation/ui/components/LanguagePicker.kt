@@ -25,11 +25,11 @@ import com.example.globaltranslation.ui.languages.getSupportedLanguages
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun LanguagePickerDialog(
+    modifier: Modifier = Modifier,
     selectedLanguageCode: String,
     onLanguageSelected: (String) -> Unit,
     onDismiss: () -> Unit,
-    title: String = "Select Language",
-    modifier: Modifier = Modifier
+    title: String = "Select Language"
 ) {
     val supportedLanguages = remember { getSupportedLanguages() }
     
@@ -90,12 +90,12 @@ fun LanguagePickerDialog(
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DualLanguagePickerDialog(
+    modifier: Modifier = Modifier,
     currentSourceLanguage: String,
     currentTargetLanguage: String,
     onLanguagesSelected: (String, String) -> Unit,
     onDismiss: () -> Unit,
-    title: String = "Select Languages",
-    modifier: Modifier = Modifier
+    title: String = "Select Languages"
 ) {
     var selectedSource by remember { mutableStateOf(currentSourceLanguage) }
     var selectedTarget by remember { mutableStateOf(currentTargetLanguage) }
@@ -240,8 +240,8 @@ fun TwoLanguagePickerButton(
     sourceLanguageCode: String,
     targetLanguageCode: String,
     onLanguagesSelected: (String, String) -> Unit,
-    title: String = "Select Languages",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    title: String = "Select Languages"
 ) {
     var showDialog by remember { mutableStateOf(false) }
     val languages = remember { getSupportedLanguages() }
@@ -374,8 +374,8 @@ private fun LanguagePickerItem(
 fun LanguagePickerButton(
     selectedLanguageCode: String,
     onLanguageSelected: (String) -> Unit,
-    title: String = "Select Language",
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    title: String = "Select Language"
 ) {
     var showDialog by remember { mutableStateOf(false) }
     

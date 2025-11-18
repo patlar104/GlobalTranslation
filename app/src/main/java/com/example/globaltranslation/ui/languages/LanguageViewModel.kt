@@ -30,14 +30,14 @@ class LanguageViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(LanguageUiState())
     val uiState: StateFlow<LanguageUiState> = _uiState.asStateFlow()
-    
+
     // Cache for download status with timestamps to avoid redundant checks
     private val downloadStatusCache = mutableMapOf<String, Pair<Boolean, Long>>()
     private val CACHE_DURATION_MS = 30_000L // 30 seconds
-    
+
     // Track active download jobs for cancellation
     private val activeDownloads = mutableMapOf<String, Job>()
-    
+
     // Track pending downloads waiting for network
     private val pendingDownloads = mutableSetOf<String>()
 
@@ -46,7 +46,7 @@ class LanguageViewModel @Inject constructor(
         loadCellularDownloadPreference()
         monitorNetworkChanges()
     }
-    
+
     /**
      * Monitors network state changes and resumes pending downloads.
      */
@@ -54,7 +54,7 @@ class LanguageViewModel @Inject constructor(
         viewModelScope.launch {
             networkMonitor.networkState.collect { networkState ->
                 _uiState.value = _uiState.value.copy(networkState = networkState)
-                
+
                 // Resume pending downloads when appropriate network becomes available
                 if (pendingDownloads.isNotEmpty()) {
                     val canDownload = when {
@@ -62,7 +62,7 @@ class LanguageViewModel @Inject constructor(
                         networkState.isCellular() && _uiState.value.allowCellularDownloads -> true
                         else -> false
                     }
-                    
+
                     if (canDownload) {
                         // Resume all pending downloads
                         val toResume = pendingDownloads.toList()
@@ -75,7 +75,7 @@ class LanguageViewModel @Inject constructor(
             }
         }
     }
-    
+
     /**
      * Loads the cellular download preference.
      */
@@ -99,12 +99,12 @@ class LanguageViewModel @Inject constructor(
                 isDownloaded = false // Will be checked async
             )
         }
-        
+
         _uiState.value = _uiState.value.copy(
             availableLanguages = languages,
             isLoading = true
         )
-        
+
         // Check download status for each language pair with English
         checkDownloadStatus()
     }
@@ -116,7 +116,7 @@ class LanguageViewModel @Inject constructor(
     private fun checkDownloadStatus() {
         viewModelScope.launch {
             val currentTime = System.currentTimeMillis()
-            
+
             // Run all download status checks in parallel
             val updatedLanguages = _uiState.value.availableLanguages.map { language ->
                 async {
@@ -130,13 +130,13 @@ class LanguageViewModel @Inject constructor(
                             language.copy(isDownloaded = cached.first)
                         } else {
                             try {
-                                val isDownloaded = translationProvider.areModelsDownloaded(
+                                val downloaded = translationProvider.areModelsDownloaded(
                                     TranslateLanguage.ENGLISH,
                                     language.code
                                 )
                                 // Update cache
-                                downloadStatusCache[language.code] = isDownloaded to currentTime
-                                language.copy(isDownloaded = isDownloaded)
+                                downloadStatusCache[language.code] = downloaded to currentTime
+                                language.copy(isDownloaded = downloaded)
                             } catch (e: Exception) {
                                 language.copy(isDownloaded = false)
                             }
@@ -144,7 +144,7 @@ class LanguageViewModel @Inject constructor(
                     }
                 }
             }.awaitAll()
-            
+
             _uiState.value = _uiState.value.copy(
                 availableLanguages = updatedLanguages,
                 isLoading = false
@@ -157,65 +157,65 @@ class LanguageViewModel @Inject constructor(
      */
     fun downloadLanguage(languageCode: String) {
         if (languageCode == TranslateLanguage.ENGLISH) return // Already available
-        
+
         // Check if language is already downloaded
         val language = _uiState.value.availableLanguages.find { it.code == languageCode }
         if (language?.isDownloaded == true) {
             // Language is already downloaded, skip download
             return
         }
-        
+
         // Check if already downloading
         if (language?.isDownloading == true) {
             // Download already in progress, skip
             return
         }
-        
+
         // Check network state
         val networkState = _uiState.value.networkState
         val requireWifi = !_uiState.value.allowCellularDownloads
-        
+
         // Check if download can proceed
         val canDownload = when {
             !networkState.isConnected() -> false
             requireWifi && !networkState.isWiFi() -> false
             else -> true
         }
-        
+
         if (!canDownload) {
             // Add to pending downloads
             pendingDownloads.add(languageCode)
-            
+
             val errorMessage = when {
                 !networkState.isConnected() -> "No internet connection. Will retry when connected."
                 requireWifi && networkState.isCellular() -> "WiFi required. Will retry on WiFi or enable cellular downloads."
                 else -> "Network unavailable. Will retry when available."
             }
-            
+
             val updatedLanguages = _uiState.value.availableLanguages.map { lang ->
                 if (lang.code == languageCode) {
                     lang.copy(isDownloading = false, downloadProgress = null)
                 } else lang
             }
-            
+
             _uiState.value = _uiState.value.copy(
                 availableLanguages = updatedLanguages,
                 error = errorMessage
             )
             return
         }
-        
+
         // Start download
         startDownload(languageCode, requireWifi)
     }
-    
+
     /**
      * Starts the actual download process with status updates.
      */
     private fun startDownload(languageCode: String, requireWifi: Boolean) {
         // Update to DOWNLOADING state with indeterminate progress
-        updateLanguageStatus(languageCode, DownloadStatus.DOWNLOADING, null, isDownloading = true)
-        
+        updateLanguageStatus(languageCode, DownloadStatus.DOWNLOADING, null, downloading = true)
+
         val downloadJob = viewModelScope.launch {
             try {
                 val result = translationProvider.downloadModels(
@@ -223,19 +223,19 @@ class LanguageViewModel @Inject constructor(
                     languageCode,
                     requireWifi = requireWifi
                 )
-                
+
                 result.fold(
                     onSuccess = {
                         // Invalidate cache and mark as complete
                         downloadStatusCache.remove(languageCode)
                         pendingDownloads.remove(languageCode)
                         activeDownloads.remove(languageCode)
-                        
+
                         val finalUpdatedLanguages = _uiState.value.availableLanguages.map { lang ->
                             if (lang.code == languageCode) {
                                 lang.copy(
-                                    isDownloading = false, 
-                                    isDownloaded = true, 
+                                    isDownloading = false,
+                                    isDownloaded = true,
                                     downloadProgress = null,
                                     downloadStatus = DownloadStatus.IDLE
                                 )
@@ -245,42 +245,42 @@ class LanguageViewModel @Inject constructor(
                     },
                     onFailure = { exception ->
                         activeDownloads.remove(languageCode)
-                        
+
                         // Check if it's a network error - if so, add to pending
                         val isNetworkError = exception.message?.contains("network", ignoreCase = true) == true ||
-                                            exception.message?.contains("connection", ignoreCase = true) == true
-                        
+                                exception.message?.contains("connection", ignoreCase = true) == true
+
                         if (isNetworkError) {
                             pendingDownloads.add(languageCode)
-                            updateLanguageStatus(languageCode, DownloadStatus.PAUSED, null, isDownloading = false)
+                            updateLanguageStatus(languageCode, DownloadStatus.PAUSED, null, downloading = false)
                         } else {
-                            updateLanguageStatus(languageCode, DownloadStatus.FAILED, null, isDownloading = false)
+                            updateLanguageStatus(languageCode, DownloadStatus.FAILED, null, downloading = false)
                         }
-                        
+
                         val errorMessage = if (isNetworkError) {
                             "Download paused: ${exception.message}. Will retry when network is available."
                         } else {
                             "Failed to download ${getLanguageName(languageCode)}: ${exception.message}"
                         }
-                        
+
                         _uiState.value = _uiState.value.copy(error = errorMessage)
                     }
                 )
             } catch (e: Exception) {
                 activeDownloads.remove(languageCode)
                 pendingDownloads.add(languageCode) // Assume network error
-                
-                updateLanguageStatus(languageCode, DownloadStatus.PAUSED, null, isDownloading = false)
-                
+
+                updateLanguageStatus(languageCode, DownloadStatus.PAUSED, null, downloading = false)
+
                 _uiState.value = _uiState.value.copy(
                     error = "Download error: ${e.message}. Will retry when network is available."
                 )
             }
         }
-        
+
         activeDownloads[languageCode] = downloadJob
     }
-    
+
     /**
      * Helper to update language download status and progress.
      */
@@ -288,12 +288,12 @@ class LanguageViewModel @Inject constructor(
         languageCode: String,
         status: DownloadStatus,
         progress: Float?,
-        isDownloading: Boolean
+        downloading: Boolean
     ) {
         val updatedLanguages = _uiState.value.availableLanguages.map { lang ->
             if (lang.code == languageCode) {
                 lang.copy(
-                    isDownloading = isDownloading,
+                    isDownloading = downloading,
                     downloadProgress = progress,
                     downloadStatus = status
                 )
@@ -301,7 +301,7 @@ class LanguageViewModel @Inject constructor(
         }
         _uiState.value = _uiState.value.copy(availableLanguages = updatedLanguages)
     }
-    
+
     /**
      * Retries a failed download (called when network becomes available).
      */
@@ -309,7 +309,7 @@ class LanguageViewModel @Inject constructor(
         val requireWifi = !_uiState.value.allowCellularDownloads
         startDownload(languageCode, requireWifi)
     }
-    
+
     /**
      * Cancels an active download.
      */
@@ -317,7 +317,7 @@ class LanguageViewModel @Inject constructor(
         activeDownloads[languageCode]?.cancel()
         activeDownloads.remove(languageCode)
         pendingDownloads.remove(languageCode)
-        
+
         val updatedLanguages = _uiState.value.availableLanguages.map { lang ->
             if (lang.code == languageCode) {
                 lang.copy(isDownloading = false, downloadProgress = null)
@@ -325,22 +325,22 @@ class LanguageViewModel @Inject constructor(
         }
         _uiState.value = _uiState.value.copy(availableLanguages = updatedLanguages)
     }
-    
+
     /**
      * Deletes a downloaded language model.
      */
     fun deleteLanguage(languageCode: String) {
         if (languageCode == TranslateLanguage.ENGLISH) return // Can't delete English
-        
+
         viewModelScope.launch {
             try {
                 val result = translationProvider.deleteModel(languageCode)
-                
+
                 result.fold(
                     onSuccess = {
                         // Invalidate cache
                         downloadStatusCache.remove(languageCode)
-                        
+
                         val updatedLanguages = _uiState.value.availableLanguages.map { lang ->
                             if (lang.code == languageCode) {
                                 lang.copy(isDownloaded = false)
@@ -378,14 +378,14 @@ class LanguageViewModel @Inject constructor(
     fun clearError() {
         _uiState.value = _uiState.value.copy(error = null)
     }
-    
+
     /**
      * Toggles the cellular downloads setting.
      */
     fun toggleCellularDownloads() {
         val newValue = !_uiState.value.allowCellularDownloads
         _uiState.value = _uiState.value.copy(allowCellularDownloads = newValue)
-        
+
         viewModelScope.launch {
             appPreferences.setAllowCellularDownloads(newValue)
         }
@@ -394,7 +394,7 @@ class LanguageViewModel @Inject constructor(
     private fun getLanguageName(code: String): String {
         return getSupportedLanguages().find { it.code == code }?.name ?: code
     }
-    
+
     override fun onCleared() {
         super.onCleared()
         // Cancel all active downloads

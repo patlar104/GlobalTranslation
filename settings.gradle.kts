@@ -3,10 +3,11 @@ pluginManagement {
         google()
         mavenCentral()
         gradlePluginPortal()
-        // Add Maven repository for preview/alpha versions if needed
-        maven {
-            url = uri("https://androidx.dev/snapshots/builds/12443078/artifacts/repository")
-        }
+        // Remove snapshot repository for production builds
+        // Add back only if you need preview/alpha versions:
+        // maven {
+        //     url = uri("https://androidx.dev/snapshots/builds/12443078/artifacts/repository")
+        // }
     }
 }
 dependencyResolutionManagement {
@@ -14,9 +15,7 @@ dependencyResolutionManagement {
     repositories {
         google()
         mavenCentral()
-        maven {
-            url = uri("https://maven.google.com")
-        }
+        // Remove duplicate - google() already includes maven.google.com
     }
 }
 

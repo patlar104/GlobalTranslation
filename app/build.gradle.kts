@@ -55,26 +55,38 @@ android {
             isMinifyEnabled = false
             isDebuggable = true
             // Removed applicationIdSuffix to prevent package name conflicts
+
+            // Enable code shrinking in debug for faster iteration
+            isShrinkResources = false
         }
         release {
             isMinifyEnabled = true
             isShrinkResources = true
+            isDebuggable = false
+
             // Only use signing config if keystore exists, otherwise create unsigned build
             val releaseSigningConfig = signingConfigs.getByName("release")
             if (releaseSigningConfig.storeFile?.exists() == true) {
                 signingConfig = releaseSigningConfig
             }
+
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            // R8 optimizations for better performance
+            ndk {
+                debugSymbolLevel = "FULL"
+            }
         }
-        
+
         // 16KB page size testing build variant
         create("sixteenKB") {
             initWith(getByName("debug"))
             isDebuggable = true
             applicationIdSuffix = ".sixteenkb"
+            matchingFallbacks += listOf("debug")
         }
     }
     
@@ -94,6 +106,96 @@ android {
     }
     buildFeatures {
         compose = true
+    }
+
+    lint {
+        // Enable additional lint checks for better code quality
+        abortOnError = false
+        checkDependencies = true
+
+        // Use custom lint configuration from lint.xml
+        checkReleaseBuilds = true
+
+        // Generate reports
+        xmlReport = true
+        htmlReport = true
+        textReport = false
+
+        // Enable baseline for incremental improvements
+        baseline = file("lint-baseline.xml")
+
+        // Warning configuration
+        warningsAsErrors = false
+
+        // Enable all additional checks from libraries
+        checkAllWarnings = true
+
+        // Explicitly disable only truly problematic checks
+        disable += setOf(
+            "LintError" // Disable internal lint errors that may occur with new AGP versions
+        )
+
+        // Enable important checks explicitly
+        enable += setOf(
+            "StopShip",
+            "LogConditional",
+            "ExpensiveAssertion",
+            "SyntheticAccessor",
+            "KotlinPropertyAccess",
+            "NoHardKeywords",
+            "UnknownNullness",
+            "AppCompatMethod",
+            "ThreadConstraint",
+            "SelectableText",
+            "LambdaLast",
+            "NoOp",
+            "EasterEgg",
+            "MemberExtensionConflict"
+        )
+
+        // Set specific checks to error severity
+        error += setOf(
+            "StopShip",
+            "ThreadConstraint"
+        )
+
+        // Set specific checks to warning severity
+        warning += setOf(
+            "OldTargetApi",
+            "LogConditional",
+            "ExpensiveAssertion",
+            "KotlinPropertyAccess",
+            "NoHardKeywords",
+            "UnknownNullness",
+            "AppCompatMethod",
+            "NegativeMargin",
+            "LambdaLast",
+            "NoOp",
+            "EasterEgg",
+            "Registered",
+            "PermissionNamingConvention",
+            "MangledCRLF",
+            "MemberExtensionConflict",
+            "ComposableLambdaParameterNaming",
+            "ComposableLambdaParameterPosition",
+            "UnsupportedChromeOsHardware"
+        )
+
+        // Set specific checks to informational severity
+        informational += setOf(
+            "SyntheticAccessor",
+            "SelectableText",
+            "DuplicateStrings",
+            "TypographyQuotes",
+            "ConvertToWebp",
+            "UnusedIds",
+            "IconExpectedSize",
+            "StringFormatTrivial",
+            "WrongThreadInterprocedural",
+            "AppLinksAutoVerify",
+            "KotlincFE10",
+            "MinSdkTooLow"
+        )
     }
 }
 
@@ -134,8 +236,7 @@ dependencies {
     
     testImplementation(libs.junit)
     testImplementation(libs.kotlinx.coroutines.test)
-    testImplementation("org.mockito:mockito-core:5.8.0")
-    testImplementation("org.mockito:mockito-inline:5.2.0")
+    testImplementation(libs.mockito.core)
     
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.test.rules)

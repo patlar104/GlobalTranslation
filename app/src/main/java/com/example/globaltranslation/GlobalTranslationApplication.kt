@@ -2,6 +2,7 @@ package com.example.globaltranslation
 
 import android.app.Application
 import com.example.globaltranslation.data.migration.AppMigrationManager
+import com.example.globaltranslation.util.AppLogger
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -10,7 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltAndroidApp
-class GloabTranslationApplication : Application() {
+class GlobalTranslationApplication : Application() {
     
     @Inject
     lateinit var appMigrationManager: AppMigrationManager
@@ -31,7 +32,7 @@ class GloabTranslationApplication : Application() {
                 appMigrationManager.handleAppUpdate(currentVersionCode)
             } catch (e: Exception) {
                 // Log error but don't crash the app
-                android.util.Log.e("GloabTranslationApp", "Migration error", e)
+                AppLogger.e("Application", "Migration failed during app startup", e)
             }
         }
     }

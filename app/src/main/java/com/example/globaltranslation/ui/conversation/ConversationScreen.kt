@@ -829,12 +829,12 @@ private fun SpeechInputArea(
 
 @Composable
 private fun SavedHistorySection(
+    modifier: Modifier = Modifier,
     savedHistory: List<ConversationTurn>,
     onSpeakText: (String, String) -> Unit,
     onDelete: (Long) -> Unit,
     onHide: () -> Unit,
-    isRefreshing: Boolean = false,
-    modifier: Modifier = Modifier
+    isRefreshing: Boolean = false
 ) {
     Card(
         modifier = modifier,

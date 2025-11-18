@@ -10,11 +10,16 @@ applyTo: '**/*'
 > - **Archive**: [`docs/archive/`](../docs/archive/) - Historical summaries and implementation reports
 
 ## Project Overview
-**PRODUCTION-READY** Android translation app with **multi-module clean architecture** using Jetpack Compose and ML Kit. Core features complete: live conversation translation, text input translation, camera translation, and language management. Architecture refactored into :core, :data, and :app modules for optimal testability and maintainability. **Now includes comprehensive 16KB page size support** for ARM64 devices and Google Play compliance.
+
+**PRODUCTION-READY** Android translation app with **multi-module clean architecture** using Jetpack Compose and ML Kit.
+Core features complete: live conversation translation, text input translation, camera translation, and language
+management. Architecture refactored into :core, :data, and :app modules for optimal testability and maintainability. *
+*Now includes comprehensive 16KB page size support** for ARM64 devices and Google Play compliance.
 
 ## Critical Build Setup (MUST READ FIRST)
 
 ### Stable Build Configuration
+
 - **AGP Version**: 8.13.0 with reliable Hilt integration
 - **Kotlin Version**: 2.2.20 (latest stable)
 - **KSP Version**: 2.2.20-2.0.2 (matches Kotlin version - note: KSP versioning changed from 1.0.x to 2.0.x)
@@ -25,6 +30,7 @@ applyTo: '**/*'
 - **Performance Optimizations**: Parallel builds enabled, 4GB heap, build caching active
 
 ### Essential Plugin Configuration
+
 ```kotlin
 // In app/build.gradle.kts - ALL plugins must be present:
 plugins {
@@ -37,6 +43,7 @@ plugins {
 ```
 
 ### Critical JVM Target Alignment
+
 ```kotlin
 // Both MUST be JVM 11 - mismatch causes build failure
 compileOptions {
@@ -54,6 +61,7 @@ kotlin {
 ## Multi-Module Clean Architecture
 
 ### Module Structure ✅
+
 ```
 :core (Pure Kotlin, no Android dependencies)
 ├── model/ (ConversationTurn domain model)
@@ -76,6 +84,7 @@ kotlin {
 ```
 
 ### Package Name & Navigation
+
 - **Package**: `com.example.globaltranslation` (typo corrected from gloabtranslation)
 - **Navigation**: Single Activity with `NavigationSuiteScaffold` for adaptive UI
 - **Destinations**: CONVERSATION, TEXT_INPUT, CAMERA, LANGUAGES (defined in AppDestinations enum)
@@ -83,6 +92,7 @@ kotlin {
 ## Provider Pattern (Clean Architecture Core)
 
 ### Interface Definition Pattern (:core module)
+
 ```kotlin
 // Example: TranslationProvider interface
 interface TranslationProvider {
@@ -95,6 +105,7 @@ interface TranslationProvider {
 ```
 
 ### Implementation Pattern (:data module)
+
 ```kotlin
 @Singleton
 class MlKitTranslationProvider @Inject constructor() : TranslationProvider {
@@ -115,6 +126,7 @@ class MlKitTranslationProvider @Inject constructor() : TranslationProvider {
 ```
 
 ### Hilt Binding Pattern (:data/di/ProviderModule.kt)
+
 ```kotlin
 @Module
 @InstallIn(SingletonComponent::class)
@@ -133,6 +145,7 @@ abstract class ProviderModule {
 ## ViewModel Pattern with StateFlow
 
 ### Established Pattern (All ViewModels Follow This)
+
 ```kotlin
 @HiltViewModel
 class ConversationViewModel @Inject constructor(
@@ -150,7 +163,7 @@ class ConversationViewModel @Inject constructor(
     // Always use viewModelScope for automatic cancellation
     fun translateAndSave(text: String, fromLang: String, toLang: String) {
         viewModelScope.launch {
-            _uiState.value = _uiState.value.copy(isTranslating = true)
+            _uiState.value = _uiState.value.copy(getTranslating = true)
             
             translationProvider.translate(text, fromLang, toLang)
                 .fold(
@@ -158,14 +171,14 @@ class ConversationViewModel @Inject constructor(
                         val turn = ConversationTurn(text, translated, fromLang, toLang)
                         _uiState.value = _uiState.value.copy(
                             conversationHistory = _uiState.value.conversationHistory + turn,
-                            isTranslating = false
+                            getTranslating = false
                         )
                         conversationRepository.saveConversation(turn)
                     },
                     onFailure = { error ->
                         _uiState.value = _uiState.value.copy(
                             error = error.message,
-                            isTranslating = false
+                            getTranslating = false
                         )
                     }
                 )
@@ -183,7 +196,7 @@ class ConversationViewModel @Inject constructor(
 // PATTERN: Immutable data class for UI state
 data class ConversationUiState(
     val conversationHistory: List<ConversationTurn> = emptyList(),
-    val isTranslating: Boolean = false,
+    val getTranslating: Boolean = false,
     val error: String? = null
 )
 ```
@@ -191,6 +204,7 @@ data class ConversationUiState(
 ## ML Kit Integration Best Practices
 
 ### Model Management
+
 - ✅ **Check Status**: Use `areModelsDownloaded()` to check without downloading
 - ✅ **WiFi Requirement**: First-time downloads require WiFi connection
 - ✅ **Auto-Download**: `translate()` automatically downloads models if missing (on WiFi)
@@ -199,6 +213,7 @@ data class ConversationUiState(
 - ❌ **DON'T**: Assume models are available without checking
 
 ### Speech Recognition
+
 - **Use Android SpeechRecognizer** - NOT ML Kit speech (more stable, no dependencies)
 - Pattern: `SpeechRecognizer.createSpeechRecognizer(context)`
 - Handle permissions with Compose built-in `rememberLauncherForActivityResult`
@@ -206,6 +221,7 @@ data class ConversationUiState(
 ## 16KB Page Size Support (Google Play 2025 Requirement)
 
 ### Build Configuration
+
 ```kotlin
 // In app/build.gradle.kts
 android {
@@ -232,12 +248,14 @@ android {
 ```
 
 ### Device Compatibility Monitoring
+
 ```kotlin
 // DeviceCompatibility.kt logs page size on app startup
 DeviceCompatibility.logPageSizeInfo()  // Called in MainActivity.onCreate()
 ```
 
 ### Testing Commands
+
 ```bash
 # Test 16KB build variant
 .\gradlew :app:assemblySixteenKB
@@ -248,26 +266,29 @@ DeviceCompatibility.logPageSizeInfo()  // Called in MainActivity.onCreate()
 ## Development Workflow
 
 ### Version Catalog Management
+
 - All dependencies in `gradle/libs.versions.toml`
 - Use `libs.` references in build files: `implementation(libs.hilt.android)`
 - **KSP Version Format**: `2.2.20-2.0.2` (changed from 1.0.x to 2.0.x)
 
 ### Build Performance Optimization
+
 ```kotlin
 // gradle.properties - optimized for multi-module builds
-org.gradle.jvmargs=-Xmx4096m -Dfile.encoding=UTF-8 -XX:+UseParallelGC
-org.gradle.parallel=true              // Parallel module builds
-org.gradle.caching=true               // Build cache enabled
-org.gradle.configureondemand=true     // On-demand configuration
+org.gradle.jvmargs = -Xmx4096m - Dfile.encoding = UTF - 8 - XX:+UseParallelGC
+org.gradle.parallel = true              // Parallel module builds
+org.gradle.caching = true               // Build cache enabled
+org.gradle.autoconfigured = true     // On-demand configuration
 
 // Recommended CI/CD build command
-./gradlew build --build-cache --parallel --stacktrace --no-daemon
+    ./ gradlew build-- build -cache-- parallel --stacktrace-- no -daemon
 
 // Fast incremental builds (local development)
-./gradlew assembleDebug --build-cache --parallel
+    ./ gradlew assembleDebug-- build -cache-- parallel
 ```
 
 ### Testing Strategy
+
 ```kotlin
 // Create fake providers in test/fake/ directory
 class FakeTranslationProvider : TranslationProvider {
@@ -292,22 +313,26 @@ abstract class TestProviderModule {
 ## Architecture Constraints
 
 ### State Management Rules
+
 - **Single Source of Truth**: Each screen has one ViewModel holding all UI state
 - **No Direct Provider Access**: Compose screens never call providers directly, only through ViewModels
 - **Immutable State**: Use data classes with copy() for state updates
 - **StateFlow Pattern**: Private MutableStateFlow, public StateFlow with asStateFlow()
 
 ### Module Dependencies
+
 - **:core** → No Android dependencies (pure Kotlin)
 - **:data** → Depends on :core, implements interfaces
 - **:app** → Depends on :core for interfaces, :data provides implementations via Hilt
 
 ### Navigation Architecture
+
 - **No Navigation in ViewModels**: Navigation events handled at Compose level
 - **Adaptive UI**: NavigationSuiteScaffold adapts to phone/tablet/desktop
 - **Material3 Expressive Theme**: Lavender/purple palette with large corner radii
 
 ## Essential Files to Understand
+
 - `MainActivity.kt` - NavigationSuiteScaffold host with DeviceCompatibility logging
 - `GloabTranslationApplication.kt` - @HiltAndroidApp entry point (name unchanged for compatibility)
 - `:core/provider/` - All provider interfaces (clean architecture boundaries)
@@ -318,6 +343,7 @@ abstract class TestProviderModule {
 ## Permission Handling Pattern
 
 ### Modern Compose Permissions (Accompanist Migrated)
+
 ```kotlin
 // Use built-in Compose permission APIs - Accompanist is deprecated
 var hasPermission by remember {
@@ -335,7 +361,9 @@ val permissionLauncher = rememberLauncherForActivityResult(
 ```
 
 ## Future Enhancement Guidelines
+
 When extending this app:
+
 1. **Follow established patterns** - Provider interfaces in :core, implementations in :data
 2. **Use existing Hilt setup** - Add new providers to ProviderModule
 3. **Maintain StateFlow pattern** - Private MutableStateFlow, public StateFlow
@@ -346,9 +374,11 @@ When extending this app:
 ## Future Opportunities (Latest Dependencies)
 
 ### CameraX Compose Migration
+
 - **Current**: Custom `CameraPreview` with AndroidView wrapper
 - **Upgrade**: Consider migrating to `androidx.camera:camera-compose` CameraPreview composable
 - **Benefits**: Better Compose integration, simplified state management, built-in lifecycle handling
+
 ```kotlin
 // Future migration pattern:
 import androidx.camera.compose.CameraPreview
@@ -359,13 +389,16 @@ CameraPreview(
 ```
 
 ### New Material 3 Components (Compose BOM 2025.10.00)
+
 Available for enhancing user experience:
+
 - **`HorizontalCenteredHeroCarousel`** - For showcasing translation history or language examples
 - **`SecureTextField` / `OutlinedSecureTextField`** - If adding user authentication features
 - **`SearchBar` / `ExpandedFullScreenSearchBar`** - For searching translation history or languages
 - **`TimePickerDialog`** - For scheduling translation reminders or history filtering
 
 ### Enhanced Animations
+
 - **New `MotionScheme`** - Unified animation system for Material 3 components
 - **Auto-sizing Text** - Text composable now supports dynamic sizing for translations
 - **Material 3 BasicTextField2** - Enhanced text input with built-in Material styling

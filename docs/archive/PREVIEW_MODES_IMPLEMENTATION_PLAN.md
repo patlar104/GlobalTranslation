@@ -2,7 +2,8 @@
 
 ## 📋 Executive Summary
 
-This document outlines the plan to implement comprehensive Android Studio preview mode support across all screens in the GlobalTranslation app. Android Studio provides three key preview modes:
+This document outlines the plan to implement comprehensive Android Studio preview mode support across all screens in the
+GlobalTranslation app. Android Studio provides three key preview modes:
 
 1. **Standard Preview Mode** - Static UI previews with multiple device/theme variants
 2. **Interactive Mode** - Live interaction with composables in the preview pane
@@ -13,6 +14,7 @@ This document outlines the plan to implement comprehensive Android Studio previe
 ### ✅ What's Already Implemented
 
 #### ConversationScreen
+
 - ✅ `@PreviewScreenSizes` for basic multi-device previews
 - ✅ `@PreviewParameter` with `ConversationUiStatePreviewProvider` (5 states)
 - ✅ `ConversationScreenLivePreview` with interactive state using `remember { mutableStateOf() }`
@@ -20,18 +22,21 @@ This document outlines the plan to implement comprehensive Android Studio previe
 - ✅ Shared preview data (`previewConversations`, `previewLanguages`)
 
 #### TextInputScreen
+
 - ✅ `@PreviewScreenSizes` for basic multi-device previews
 - ✅ `@PreviewParameter` with `TextInputUiStatePreviewProvider` (4 states)
 - ✅ Extracted `TextInputScreenContent` composable for preview testing
 - ✅ Uses shared preview data
 
 #### CameraScreen
+
 - ✅ `@PreviewScreenSizes` for overlay previews
 - ✅ `@PreviewParameter` with `CameraUiStatePreviewProvider` (5 states)
 - ✅ Extracted `CameraOverlayContent` for overlay-only preview (camera preview excluded)
 - ✅ Uses shared preview data
 
 #### LanguageScreen
+
 - ⚠️ **Basic preview only** - Empty preview stub
 - ❌ No `@PreviewParameter` provider
 - ❌ No interactive preview
@@ -52,9 +57,10 @@ Gaps remaining:
     - ✅ TextInputScreen and CameraScreen have live previews
 
 2. UI Check Mode Support
-     - Add accessibility validation previews and semantics audits
+    - Add accessibility validation previews and semantics audits
 
 #### 1. Advanced Preview Annotations (ALL SCREENS)
+
 - ✅ Implemented via composite `DesignVariantPreview` and helper sets (`FontScalePreview`, `DynamicColorPreview`)
 - ✅ `@PreviewLightDark` applied through `DesignVariantPreview`
 - ✅ `@PreviewFontScale` applied through `DesignVariantPreview`
@@ -95,13 +101,15 @@ Status: COMPLETED
 - Ensured `@MultiDevicePreview` and `@PreviewScreenSizes` are present where appropriate
 - Standardized theming via `PreviewScaffold { ... }`
 
-Goal: Ensure every screen has comprehensive standard previews with multiple states, devices, themes, and accessibility configurations.
+Goal: Ensure every screen has comprehensive standard previews with multiple states, devices, themes, and accessibility
+configurations.
 
 - Added `@DesignVariantPreview` to all state and interactive previews
 - Ensured `@MultiDevicePreview` and `@PreviewScreenSizes` are present where appropriate
 - Standardized theming via `PreviewScaffold { ... }`
 
-**Goal**: Ensure every screen has comprehensive standard previews with multiple states, devices, themes, and accessibility configurations.
+**Goal**: Ensure every screen has comprehensive standard previews with multiple states, devices, themes, and
+accessibility configurations.
 
 #### 1.1 Add Missing Preview Annotations
 
@@ -131,6 +139,7 @@ private fun [Screen]Preview(
 
 **Required Imports**:
 Required Imports:
+
 ```kotlin
 import androidx.compose.ui.tooling.preview.PreviewDynamicColors
 import androidx.compose.ui.tooling.preview.PreviewFontScale
@@ -210,9 +219,9 @@ private fun LanguageScreenStatesPreview(
 **Required Changes**:
 
 1. **LanguageScreen.kt** - Extract `LanguageScreenContent`
-   - Separate `LanguageScreen()` (with ViewModel) from `LanguageScreenContent()` (pure composable)
-   - Pass state and callbacks as parameters
-   - Use in preview with no-op callbacks
+    - Separate `LanguageScreen()` (with ViewModel) from `LanguageScreenContent()` (pure composable)
+    - Pass state and callbacks as parameters
+    - Use in preview with no-op callbacks
 
 2. **ConversationScreen.kt** - Already has `ConversationScreenContent` ✅
 3. **TextInputScreen.kt** - Already has `TextInputScreenContent` ✅
@@ -227,6 +236,7 @@ private fun LanguageScreenStatesPreview(
 #### 2.1 Add Live Interactive Previews (ALL SCREENS)
 
 **Pattern** (Already implemented in ConversationScreen):
+
 ```kotlin
 @MultiDevicePreview
 @Composable
@@ -263,7 +273,6 @@ private fun [Screen]LivePreview() {
 - ✅ TextInputScreen - `TextInputScreenLivePreview`
 - ✅ CameraScreen - `CameraOverlayLivePreview`
 - ✅ LanguageScreen - `LanguageScreenLivePreview`
-
 
 #### 2.2 TextInputScreen Interactive Preview
 
@@ -340,7 +349,7 @@ private fun CameraOverlayLivePreview() {
                     DetectedTextBlock("Hello", "Hola", 0.1f, 0.2f, 0.3f, 0.1f),
                     DetectedTextBlock("World", "Mundo", 0.1f, 0.35f, 0.3f, 0.1f)
                 ),
-                isFlashOn = false
+                getFlashOn = false
             )
         )
     }
@@ -350,7 +359,7 @@ private fun CameraOverlayLivePreview() {
             CameraOverlayContent(
                 uiState = state.value,
                 onFlashToggle = {
-                    state.value = state.value.copy(isFlashOn = !state.value.isFlashOn)
+                    state.value = state.value.copy(getFlashOn = !state.value.getFlashOn)
                 },
                 onLanguagePickerClick = { /* no-op in preview */ },
                 onClearResults = {
@@ -398,7 +407,7 @@ private fun LanguageScreenLivePreview() {
                     // Simulate download
                     state.value = state.value.copy(
                         availableLanguages = state.value.availableLanguages.map {
-                            if (it.code == languageCode) it.copy(isDownloading = true)
+                            if (it.code == languageCode) it.copy(downloading = true)
                             else it
                         }
                     )
@@ -445,11 +454,11 @@ IconButton(
     onClick = onFlashToggle,
     modifier = Modifier
         .semantics {
-            contentDescription = if (isFlashOn) "Turn flash off" else "Turn flash on"
+            contentDescription = if (getFlashOn) "Turn flash off" else "Turn flash on"
         }
 ) {
     Icon(
-        if (isFlashOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
+        if (getFlashOn) Icons.Default.FlashOn else Icons.Default.FlashOff,
         contentDescription = null // Handled by parent semantics
     )
 }
@@ -690,19 +699,19 @@ annotation class DynamicColorPreview
 ### Manual Testing in Android Studio
 
 1. **Standard Preview**:
-   - Open each `*Screen.kt` file
-   - Verify preview panel shows multiple device/theme variants
-   - Check that all preview parameters render correctly
+    - Open each `*Screen.kt` file
+    - Verify preview panel shows multiple device/theme variants
+    - Check that all preview parameters render correctly
 
 2. **Interactive Mode**:
-   - Click "Run Interactive Mode" (play icon in preview)
-   - Test button clicks, text input, language selection
-   - Verify state updates reflect in UI immediately
+    - Click "Run Interactive Mode" (play icon in preview)
+    - Test button clicks, text input, language selection
+    - Verify state updates reflect in UI immediately
 
 3. **UI Check Mode**:
-   - Click "Run UI Check" in preview pane
-   - Review accessibility warnings (missing descriptions, touch targets)
-   - Fix all critical and high-priority issues
+    - Click "Run UI Check" in preview pane
+    - Review accessibility warnings (missing descriptions, touch targets)
+    - Fix all critical and high-priority issues
 
 ### Automated Testing
 
@@ -831,7 +840,7 @@ See `docs/PREVIEW_MODE_GUIDE.md` for detailed usage instructions.
 ## 📞 Support
 
 For questions or issues with preview implementation:
- 
+
 1. Check Android Studio documentation: [Compose tooling](https://developer.android.com/jetpack/compose/tooling)
 2. Review existing preview implementations in `ConversationScreen.kt`
 3. Consult `ui/components/Previews.kt` for annotation examples
